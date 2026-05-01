@@ -27,12 +27,13 @@ class AtomicJsonFile {
     } catch (error) {
       const backupPath = `${this.filePath}.corrupt-${Date.now()}`;
       await fs.promises.rename(this.filePath, backupPath);
-      throw new Error(`Local database JSON was invalid. Moved it to ${backupPath}. ${error.message}`);
+      this.lastRecovery = `Local database JSON was invalid. Moved it to ${backupPath}. ${error.message}`;
+      return null;
     }
   }
 
   async write(data) {
-    this.writeQueue = this.writeQueue.then(async () => {
+    this.writeQueue = this.writeQueue.catch(() => {}).then(async () => {
       await fs.promises.mkdir(path.dirname(this.filePath), { recursive: true });
       const tempPath = `${this.filePath}.${process.pid}.${Date.now()}.tmp`;
       await fs.promises.writeFile(tempPath, `${JSON.stringify(data, null, 2)}\n`);
@@ -44,6 +45,11 @@ class AtomicJsonFile {
 
 export async function createDb() {
   const filePath = process.env.DB_PATH ? path.resolve(process.env.DB_PATH) : path.join(backendRoot, "data/db.json");
+  const oldAccidentalPath = path.join(backendRoot, "backend/data/db.json");
+  if (!process.env.DB_PATH && !fs.existsSync(filePath) && fs.existsSync(oldAccidentalPath)) {
+    await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.promises.copyFile(oldAccidentalPath, filePath);
+  }
   const db = new Low(new AtomicJsonFile(filePath), structuredClone(defaultData));
   await db.read();
   db.data ||= structuredClone(defaultData);

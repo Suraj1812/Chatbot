@@ -1,10 +1,11 @@
 import express from "express";
 import { z } from "zod";
 import { scrapeUrls } from "../services/scraper.js";
-import { searchWeb } from "../services/webSearch.js";
+import { researchQuery } from "../services/researcher.js";
 
 const askSchema = z.object({
-  query: z.string().trim().min(1).max(1000)
+  query: z.string().trim().min(1).max(1000),
+  autoResearch: z.boolean().optional().default(true)
 });
 
 const scrapeSchema = z.object({
@@ -46,7 +47,7 @@ export function createApiRouter({ engine, scrapeState }) {
   router.post("/ask", async (request, response) => {
     const input = askSchema.parse(request.body);
     const localAnswer = await engine.ask(input.query);
-    if (localAnswer.intent === "conversation" || localAnswer.confidence >= 0.45) {
+    if (!input.autoResearch || engine.isAnswerSufficient(localAnswer)) {
       response.json(localAnswer);
       return;
     }
@@ -58,10 +59,11 @@ export function createApiRouter({ engine, scrapeState }) {
 
     scrapeState.active = true;
     try {
-      const searchResults = await searchWeb(input.query, { limit: 8 });
-      const result = await scrapeUrls(searchResults.map((item) => item.source), {
-        depth: 0,
-        maxPages: 8
+      const result = await researchQuery(input.query, {
+        queryLimit: Number(process.env.AUTO_RESEARCH_QUERIES || 4),
+        searchLimit: Number(process.env.AUTO_RESEARCH_RESULTS_PER_QUERY || 7),
+        maxResults: Number(process.env.AUTO_RESEARCH_RESULT_LIMIT || 16),
+        maxPages: Number(process.env.AUTO_RESEARCH_MAX_PAGES || 12)
       });
       if (result.documents.length) {
         await engine.addScrapedDocuments(result.documents);
@@ -71,7 +73,8 @@ export function createApiRouter({ engine, scrapeState }) {
         ...researchedAnswer,
         research: {
           attempted: true,
-          searched: searchResults.length,
+          queries: result.queries,
+          searched: result.searchResults.length,
           scraped: result.documents.length,
           errors: result.errors
         }

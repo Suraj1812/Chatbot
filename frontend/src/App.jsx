@@ -46,7 +46,7 @@ export default function App() {
           <div className="grid min-h-[50vh] place-items-center text-center">
             <div>
               <h2 className="text-3xl font-semibold tracking-tight">Ask real local knowledge.</h2>
-              <p className="mt-2 text-muted">Scrape or teach data first. No local data means no answer.</p>
+              <p className="mt-2 text-muted">It checks memory first, then researches and saves useful pages when needed.</p>
             </div>
           </div>
         )}

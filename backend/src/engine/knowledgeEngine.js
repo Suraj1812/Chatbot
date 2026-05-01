@@ -320,7 +320,8 @@ export class KnowledgeEngine {
     const top = results[0]?.score || 0;
     const second = results[1]?.score || 0;
     const sourceCount = new Set(results.slice(0, 5).map((result) => result.source)).size;
-    const supported = results.slice(0, 5).filter((result) => answer.includes(result.text.slice(0, Math.min(80, result.text.length)))).length;
+    const normalizedAnswer = normalizeAnswerText(answer);
+    const supported = results.slice(0, 5).filter((result) => normalizedAnswer.includes(normalizeAnswerText(result.text).slice(0, 80))).length;
     const raw = Math.min(top / 9, 0.48) +
       Math.min(Math.max(top - second, 0) / 10, 0.12) +
       Math.min(sourceCount, 4) * 0.08 +
@@ -348,13 +349,16 @@ export class KnowledgeEngine {
     const answer = this.buildAnswer(query, results);
     const contradictions = this.detectContradictions(results.slice(0, 6));
     const confidence = this.confidence(results, contradictions, answer);
+    const normalizedAnswer = normalizeAnswerText(answer);
+    const answerBackedResults = results.filter((result) => normalizedAnswer.includes(normalizeAnswerText(result.text).slice(0, 80)));
+    const sourceResults = answerBackedResults.length ? answerBackedResults : results;
 
     const response = answer
       ? {
           answer,
           confidence,
-          sources: compactSources(results),
-          chunks: results.slice(0, 5).map(({ id, title, text, source, score, type }) => ({ id, title, text, source, score, type })),
+          sources: compactSources(sourceResults),
+          chunks: sourceResults.slice(0, 5).map(({ id, title, text, source, score, type }) => ({ id, title, text, source, score, type })),
           contradictions
         }
       : {

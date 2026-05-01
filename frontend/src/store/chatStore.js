@@ -19,17 +19,24 @@ export const useChatStore = create((set, get) => ({
     const userMessage = { id: crypto.randomUUID(), role: "user", content: trimmed };
     set((state) => ({ messages: [...state.messages, userMessage], loading: true, loadingLabel: "Searching local knowledge" }));
 
-    let timer;
+    const timers = [];
     try {
-      timer = setTimeout(() => {
+      timers.push(setTimeout(() => {
         if (get().loading) set({ loadingLabel: "Researching and scraping sources" });
-      }, 1200);
+      }, 1200));
+      timers.push(setTimeout(() => {
+        if (get().loading) set({ loadingLabel: "Reading pages and updating memory" });
+      }, 7000));
+      timers.push(setTimeout(() => {
+        if (get().loading) set({ loadingLabel: "Ranking sources for the best local answer" });
+      }, 14000));
       const { data } = await api.post("/ask", { query: trimmed });
-      clearTimeout(timer);
+      timers.forEach(clearTimeout);
       const assistantMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
         content: data.answer,
+        query: trimmed,
         confidence: data.confidence,
         sources: data.sources || [],
         chunks: data.chunks || [],
@@ -39,17 +46,17 @@ export const useChatStore = create((set, get) => ({
       await get().refreshHealth();
       return data;
     } catch (error) {
-      clearTimeout(timer);
+      timers.forEach(clearTimeout);
       set({ loading: false, loadingLabel: "" });
       throw error;
     }
   },
 
   async feedback(message, rating) {
-    const previousUser = [...get().messages].reverse().find((item) => item.role === "user");
-    if (!previousUser || !message?.content) return;
+    const query = message?.query || [...get().messages].reverse().find((item) => item.role === "user")?.content;
+    if (!query || !message?.content) return;
     await api.post("/feedback", {
-      query: previousUser.content,
+      query,
       answer: message.content,
       rating
     });

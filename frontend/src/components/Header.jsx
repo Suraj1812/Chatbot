@@ -10,7 +10,7 @@ export function Header({ health, onOpenData }) {
         </div>
         <div className="flex items-center gap-3">
           <span className="hidden text-sm text-muted sm:inline">
-            {health ? `${health.documents} sources · ${health.facts} facts` : "checking..."}
+            {health ? `${health.documents} sources · ${health.facts} facts${health.scrapeInProgress ? " · scraping" : ""}` : "checking..."}
           </span>
           <button
             type="button"
