@@ -41,10 +41,22 @@ await engine.addScrapedDocuments([
     content: "Address: Parson mandir, near Badkhal Lake, Faridabad. Is there parking available near temples in Faridabad?",
     source: "test/noisy-faridabad",
     type: "scraped"
+  },
+  {
+    title: "Dictionary examples",
+    content: "‘I need to see a doctor.’ ‘What for?’ Those who buy sarees have become richer.",
+    source: "test/noisy-doctor",
+    type: "scraped"
+  },
+  {
+    title: "Movie snippet",
+    content: "Modi Kaka Ka Gaon, a 2017 Indian Hindi-language drama film, is the first biopic about Modi.",
+    source: "test/noisy-modi-film",
+    type: "scraped"
   }
 ]);
 
-for (const query of ["who is rahul gandhi", "rahul gandhi", "who is maa ganga", "faridabad", "who is me?"]) {
+for (const query of ["who is rahul gandhi", "rahul gandhi", "who is maa ganga", "faridabad", "how to become doctor", "who is me?"]) {
   const answer = await engine.ask(query);
   assert.equal(answer.answer, "No sufficient local data found", query);
   assert.equal(answer.confidence, 0, query);
@@ -67,6 +79,21 @@ await engine.learn({
   source: "manual",
   text: "Faridabad is a city in the Indian state of Haryana and part of the National Capital Region. It is known as an industrial hub near Delhi."
 });
+await engine.learn({
+  title: "JavaScript",
+  source: "manual",
+  text: "JavaScript is a programming language used to make web pages interactive."
+});
+await engine.learn({
+  title: "Coffee at home",
+  source: "manual",
+  text: "Coffee at home can be made by grinding beans, heating water, and brewing with a filter, French press, or moka pot."
+});
+await engine.learn({
+  title: "Capital of France",
+  source: "manual",
+  text: "Paris is the capital of France."
+});
 
 const rahul = await engine.ask("who is rahul gandhi");
 assert.match(rahul.answer, /Rahul Gandhi is an Indian politician/i);
@@ -79,6 +106,18 @@ assert.ok(ganga.confidence > 0.4);
 const faridabad = await engine.ask("faridabad");
 assert.match(faridabad.answer, /Faridabad is a city/i);
 assert.ok(faridabad.confidence > 0.4);
+
+const javascript = await engine.ask("what is javascript");
+assert.match(javascript.answer, /JavaScript is a programming language/i);
+assert.ok(javascript.confidence > 0.4);
+
+const coffee = await engine.ask("how to make coffee at home");
+assert.match(coffee.answer, /Coffee at home can be made/i);
+assert.ok(coffee.confidence > 0.4);
+
+const france = await engine.ask("capital of france");
+assert.match(france.answer, /Paris is the capital of France/i);
+assert.ok(france.confidence > 0.4);
 
 fs.rmSync(process.env.DB_PATH, { force: true });
 console.log("Engine regression tests passed.");

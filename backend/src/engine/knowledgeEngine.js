@@ -24,8 +24,14 @@ const SUBJECT_MODIFIER_TOKENS = new Set([
   "article", "biography", "course", "engine", "family", "father", "guide", "history",
   "mother", "page", "profile", "son", "story", "tutorial", "wife"
 ]);
+const HOW_ACTION_TOKENS = new Set([
+  "apply", "become", "brew", "build", "complete", "cook", "create", "earn", "follow",
+  "grind", "heat", "learn", "made", "make", "mix", "prepare", "practice", "start", "study",
+  "train", "use", "write"
+]);
+const HOW_PROCESS_PATTERNS = /\b(apply|become|brew|build|complete|cook|create|earn|follow|grind|heat|learn|made|make|method|mix|prepare|practice|process|steps?|start|study|train|use|write)\b/i;
 const DEFINITION_PATTERNS = /\b(is|are|was|were|refers to|means|known as|known for|called|serves as|leader|politician|goddess|god|deity|river|city|district|state|person|founder|actor|singer|writer|minister|president|prime minister)\b/i;
-const OVERVIEW_BAD_PATTERNS = /\b(address|explore|parking|near|visit near|places to visit|best time to visit|religious places|temples?|mandir|gurudwara|faq|question|answer)\b/i;
+const OVERVIEW_BAD_PATTERNS = /\b(address|administration|biopic|book|controversy|drama|episode|explore|faq|film|movie|near|opinion polling|parking|places to visit|poems?|question|relationship|religious places|temples?|mandir|gurudwara|visit near|best time to visit|answer)\b/i;
 const OVERVIEW_GOOD_PATTERNS = /\b(is|are|city|district|state|located|known for|famous for|population|part of|region|area|capital|founded|established)\b/i;
 
 function isFactLike(sentence) {
@@ -58,6 +64,7 @@ function questionKind(query) {
   if (/^(what is|what are|who is|who are|define|tell me about)\b/.test(normalized)) return "definition";
   if (/^(how|how do|how does|how to)\b/.test(normalized)) return "how";
   if (/^(why)\b/.test(normalized)) return "why";
+  if (/^(capital of|population of|currency of|president of|prime minister of)\b/.test(normalized)) return "fact";
   if (uniqueTokens(normalized).length <= 2) return "overview";
   return "general";
 }
@@ -105,13 +112,29 @@ function directIdentityFocus(result, specificTokens) {
   if (specificTokens.length === 1) {
     const position = positions[0];
     const nextToken = textTokens[textTokens.indexOf(specificTokens[0]) + 1];
-    return position === 0 && !SUBJECT_MODIFIER_TOKENS.has(nextToken);
+    return position <= 1 && !SUBJECT_MODIFIER_TOKENS.has(nextToken);
   }
 
   const first = Math.min(...positions);
   const last = Math.max(...positions);
   const earlyWindow = rawTokens.slice(0, Math.min(rawTokens.length, last + 8)).join(" ");
   return first <= 1 && last <= 6 && /\b(is|are|was|were|means|refers|known|called|serves|leader|politician|goddess|god|city|capital)\b/i.test(earlyWindow);
+}
+
+function requiredSpecificCoverage(kind, specificTokens, entityStrict) {
+  if (!specificTokens.length) return 0;
+  if (entityStrict || kind === "definition" || kind === "overview") return 1;
+  if (kind === "how") return specificTokens.length <= 2 ? 1 : 0.66;
+  return specificTokens.length <= 2 ? 1 : 0.6;
+}
+
+function hasHowToProof(result, specificTokens) {
+  const textTokens = result.textTokens || uniqueTokens(result.text);
+  const topicTokens = specificTokens.filter((token) => !HOW_ACTION_TOKENS.has(token));
+  const hasTopic = topicTokens.length
+    ? tokenOverlap(topicTokens, textTokens) >= Math.min(1, 1 / Math.max(topicTokens.length, 1))
+    : tokenOverlap(specificTokens, textTokens) > 0;
+  return hasTopic && HOW_PROCESS_PATTERNS.test(result.text);
 }
 
 function hostFromSource(source) {
@@ -151,6 +174,9 @@ function sentenceQuality(text, kind, coreTokens = []) {
   if (words.length > 70) score -= 0.5;
   if (words.length < 5) score -= 1;
   if (/^\[?\d+]|^["'“”]/.test(value)) score -= 4;
+  if (/^\[[a-z]\]/i.test(value)) score -= 4;
+  if (/^\([^)]{1,120}\)/.test(value)) score -= 2;
+  if (/^(also|it|this|that|these|those|he|she|they|his|her|their)\b/i.test(value)) score -= 3;
   if ((value.match(/\b\d+(?:\.\d+)?\s+[A-Z]/g) || []).length >= 2) score -= 6;
   if (/\?$/.test(value)) score -= 5;
   if (/\b(click|subscribe|sign up|cookie|advertisement|buy now|all rights reserved|privacy policy|terms of use)\b/i.test(value)) score -= 1.2;
@@ -177,11 +203,14 @@ function sentenceQuality(text, kind, coreTokens = []) {
 
   if (kind === "how" && /\b(step|use|start|create|install|run|configure|works|process)\b/i.test(value)) score += 0.8;
   if (kind === "why" && /\b(because|reason|due to|caused by|so that)\b/i.test(value)) score += 0.8;
+  if (kind === "fact" && /\b(is|are|was|were|capital|population|currency|president|prime minister)\b/i.test(value)) score += 0.8;
   return score;
 }
 
 function normalizeAnswerText(text) {
   return String(text || "")
+    .replace(/\[[a-z0-9]+]/gi, "")
+    .replace(/^\([^)]{1,120}\)\s*/, "")
     .replace(/\s+/g, " ")
     .replace(/\s+([,.!?;:])/g, "$1")
     .trim();
@@ -218,18 +247,22 @@ function buildCandidateResponse(query, results) {
       const minimumOverlap = Math.min(0.5, 2 / Math.max(queryTokens.length, 1));
       const hasQuestionTermInText = result.textOverlap >= Math.min(0.5, 1 / Math.max(coreTokens.length, 1));
       const hasStrongTitleMatch = result.titleOverlap >= 0.7 && result.quality > 0.2;
-      const requiredSpecificCoverage = entityStrict ? 1 : Math.min(0.5, 1 / Math.max(specificTokens.length, 1));
-      const hasSpecificTerm = !specificTokens.length || result.specificTextOverlap >= requiredSpecificCoverage;
+      const requiredCoverage = requiredSpecificCoverage(kind, specificTokens, entityStrict);
+      const hasSpecificTerm = !specificTokens.length || result.specificTextOverlap >= requiredCoverage;
       const hasEntityFocus = !entityStrict || entityAppearsEarly(result, specificTokens);
       const needsDefinitionShape = kind === "definition" || (kind === "overview" && entityStrict);
       const hasDefinitionShape = !needsDefinitionShape || DEFINITION_PATTERNS.test(result.text) || OVERVIEW_GOOD_PATTERNS.test(result.text);
-      const hasDirectIdentityFocus = kind !== "definition" || directIdentityFocus(result, specificTokens);
+      const hasDirectSubjectFocus = (kind !== "definition" && kind !== "overview") || !entityStrict || directIdentityFocus(result, specificTokens);
+      const hasHowShape = kind !== "how" || hasHowToProof(result, specificTokens);
+      const hasOverviewShape = kind !== "overview" || !OVERVIEW_BAD_PATTERNS.test(result.text);
       const qualityFloor = kind === "overview" ? 0.35 : -0.2;
       return result.overlap >= minimumOverlap &&
         hasSpecificTerm &&
         hasEntityFocus &&
         hasDefinitionShape &&
-        hasDirectIdentityFocus &&
+        hasDirectSubjectFocus &&
+        hasHowShape &&
+        hasOverviewShape &&
         result.quality > qualityFloor &&
         (hasQuestionTermInText || hasStrongTitleMatch);
     })
