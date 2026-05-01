@@ -29,6 +29,20 @@ npm run install:all
 
 ## Run
 
+Backend + frontend together:
+
+```bash
+npm run start:all
+```
+
+Then open:
+
+```text
+http://localhost:5173
+```
+
+Or run separately.
+
 Terminal 1:
 
 ```bash

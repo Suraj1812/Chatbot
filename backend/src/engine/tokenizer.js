@@ -1,8 +1,10 @@
 const STOP_WORDS = new Set([
-  "a", "an", "and", "are", "as", "at", "be", "by", "for", "from", "has", "have",
-  "how", "i", "in", "into", "is", "it", "its", "match", "no", "of", "on", "or",
-  "that", "the", "their", "this", "to", "use", "using", "was", "what", "when",
-  "where", "which", "with", "you", "your"
+  "a", "an", "and", "are", "as", "ask", "at", "be", "by", "can", "could", "do",
+  "does", "explain", "for", "from", "give", "has", "have", "help", "how", "i",
+  "in", "into", "is", "it", "its", "match", "me", "no", "of", "on", "or",
+  "please", "show", "tell", "that", "the", "their", "this", "to", "use",
+  "using", "was", "what", "when", "where", "which", "who", "why", "with",
+  "you", "your"
 ]);
 
 const SYNONYMS = {
@@ -45,6 +47,18 @@ export function tokenize(value, { expand = false } = {}) {
     for (const synonym of SYNONYMS[token] || []) tokens.add(stem(synonym));
   }
   return [...tokens];
+}
+
+export function uniqueTokens(value, options) {
+  return [...new Set(tokenize(value, options))];
+}
+
+export function tokenOverlap(left, right) {
+  const leftTokens = Array.isArray(left) ? left : uniqueTokens(left);
+  const rightSet = new Set(Array.isArray(right) ? right : uniqueTokens(right));
+  if (!leftTokens.length || !rightSet.size) return 0;
+  const matches = leftTokens.filter((token) => rightSet.has(token)).length;
+  return matches / leftTokens.length;
 }
 
 export function splitSentences(value) {

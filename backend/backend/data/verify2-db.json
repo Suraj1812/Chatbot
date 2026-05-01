@@ -1,0 +1,1092 @@
+{
+  "documents": [
+    {
+      "id": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "title": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "content": "Codex is OpenAI’s answer to software like Claude Code and Google Antigravity, a standalone AI coding app for macOS that can also be plugged into your IDE (Integrated Development Environment). Codex is capable of creating and managing large projects, generating and debugging multiple files.\nTo see how it stacks up against the alternatives, I put OpenAI Codex through a series of tests to determine its coding performance, strengths, and weaknesses. Keep reading to find out how Codex performed.\nOpenAI Codex is a coding assistant designed to help developers, students, and teams quickly build software with AI. It’s basically a more advanced version of ChatGPT’s coding mode, allowing you to build entire code repositories, as well as debug existing codebases.\nCodex can be used in a variety of scenarios, from building web and desktop applications to refactoring and code analysis to code explanation. Unlike a typical chat-based coding tool, Codex can manage multiple files, building more complex web apps than a canvas-like mode in ChatGPT, Gemini, or Claude.\nUsing Codex was pretty simple. To start off, installation was simple, working just like installing any other piece of software on macOS. Once installed, the app presented me with a simple interface featuring a chatbot and a sidebar where I could manage my projects and explore the automations and Skills (prompt presets) offered by Codex.\nThe automations offered by Codex are essentially scheduled prompts that it runs at a chosen interval. Skills, meanwhile, are premade, advanced prompts that use integrations with other software to perform advanced activities, like turning a Figma design into a webpage or generating a video for your website using Sora.\nCodex can also be accessed via the Cloud, with repositories managed through a GitHub integration. Unfortunately, I found that implementation to be very unintuitive and hard to integrate into any kind of workflow.\nThe desktop app was very simple to use. Whether I was asking it to generate code or to answer questions, the model performed its tasks quickly and with reasonable accuracy. It is also linked to specific code lines in its explanation, making it easy to review and verify the code.\nOverall, using OpenAI Codex felt very intuitive. Setting up a new project was easy thanks to the GitHub integration, but also possible locally by simply creating a new folder. Overall, I would say that Codex was the most user-friendly coding assistant I’ve used thus far.\nCodex is built to turn human intent into working software – fast. It bridges the gap between plain English and code, helping developers move from idea to implementation with fewer roadblocks. Whether you're prototyping, debugging, or navigating an unfamiliar codebase, Codex acts less like a static tool and more like an engineering assistant.\nCodex can use your normal, conversational prompts to create advanced web apps in multiple programming languages and frameworks, including Python, Angular, Node.js, PHP, Swift, Kotlin, and others.\nWhen testing Codex, I found that it understands simple prompts well. I was able to build a Kanban dashboard, with a calendar and a Wiki with a simple prompt, and it worked pretty well. To test something more complex, I asked Codex to generate a curling game. It did so, although the game had trouble with a few =rules, and even after fixes and my notes, the dimensions and gameplay were still a bit off what they should be.\nCodex does a good job of understanding and explaining existing code. Whenever I asked for a breakdown of code, it would relate to specific lines when doing so. The breakdowns are clear and easy to understand, even if you don’t have experience with coding.\nOf course, if you ask for a more technical breakdown, Codex can deliver it and adjust to your knowledge level, giving answers suitable to your abilities. All in all, Codex is definitely capable of performing code analysis at a high level.\nTo test OpenAI Codex’s debugging capabilities, I asked Gemini 3 Pro to introduce some hard-to-spot glitches in a simple app. Codex didn’t have any trouble finding bugs in either of the two scenarios I presented it.\nSimilarly, I corrupted a file in one scenario, breaking my software. In this case, Codex also spotted the errors and rewrote the script to make it work. In more complex projects I generated, debugging was pretty successful, although sometimes it wouldn’t understand certain GUI-related prompts properly, for example, not being able to create a proper responsive layout.\nOpenAI claims that Codex can support over a dozen programming languages and multiple frameworks. However, I found that when writing an app without specific language requirements, it defaults to Python or JavaScript for most tasks.\nWhen testing Codex, I asked it to rewrite several ASPs into different languages. It did so promptly, delivering functional code in languages like TypeScript and C# without issue. The software was also able to easily pick a different programming language, based on even pretty vague requirements.\nThe first steps with OpenAI Codex may have been the hardest. Codex requires you to either sync with a GitHub project to use in cloud mode or install a standalone app. Unlike Google Antigravity, Codex doesn’t offer native Windows or Linux installations. It only provides a separate installer for macOS. It can be used with an IDE like VS Code, but it’s not quite as plug-and-play as its competition.\nOf course, just like any IDE, Codex depends on the software installed on your computer to run, test, and compile scripts. This is expected, as Codex isn’t a code for casual, beginner-level coding, but rather an advanced assistant.\nI tested OpenAI Codex in a few ways, asking it to write code for a variety of software in different programming languages. I wanted to give Codex a challenge, so I asked it to build two different apps.\nThe first app was a pretty simple time management app. It featured a calendar, a kanban board, and a wiki that let you connect tasks to the calendar. It worked well, with only very minor bugs, and each iteration brought exactly what I asked for.\nThe second app was a curling game. Seeing as I was writing this around the time of the Winter Olympic Games, I decided to test Codex’s capabilities with a complex sport that didn’t require much graphics rendering.\nWhile Codex got the gist of what I was trying to do, it still needed a lot of refinement to make the game actually playable. For example, stones would disappear when they shouldn’t, and power was hard to adjust. Even after several iterations, Codex struggled to make adjustments that would make the game a good representation.\nCodex also does a relatively good job matching programming languages to my use cases. When I asked it for an app that would run in the Windows tray, it immediately chose Python. When asked for an alternative implementation, Codex chose C#. This was the right choice, as C# works well on Windows through the .NET framework.\nWhen looking through community forums and websites like Reddit, I found that the general consensus is positive. Users were particularly focused on the intuitiveness of its interface and the speed of the model.\nSome users also appreciated how hands-off Codex was, allowing them to focus on orchestrating, rather than micromanaging and editing the code themselves. This was particularly appreciated by people with some technical experience but limited coding skills, as an opportunity to build software faster and more efficiently.\nOn the flip side, many Windows and Linux users found Codex's macOS-only status extremely frustrating. Other users also pointed out that the software doesn’t show its reasoning by default, making it harder to oversee what it's doing. Finally, some also pointed out that Codex is having trouble with code refactoring.\nOpenAI Codex is based on the same model previously used to create GitHub Copilot, but that isn’t its only competitor. Other products on the market, like Google Antigravity, Claude Code, or Windsurf, all work similarly to OpenAI Codex.\nAt this point, all three top AI models do an excellent job in coding simple solutions. This means the biggest differentiator in terms of performance was always going to be how fast and how user-friendly each interface was.\nOpenAI’s implementation is definitely one of the better ones in terms of usability. Installing it and connecting it to GitHub was simple, and adding a new project was very intuitive. This is something that I have struggled with when testing Google Antigravity, which had trouble setting up all its dependencies in the installation process. It’s also far simpler to set up than Claude Code and GitHub CoPilot, offering a separate app, alongside plugins for popular IDEs.\nI also noticed that Codex is on the faster side when it comes to generating code. Most simple tasks I requested took under a minute, while Antigravity, for example, would often take over a minute, even for a simple code fix in a rather small app. Take a look at the detailed comparison table below.\nOpenAI Codex is bundled with ChatGPT, starting at $20.00/month. While it does offer a free version with increased usage limits for a limited time, these are likely to be really restrictive when OpenAI ends its launch phase.\nHere’s a breakdown of the plans you can pick with OpenAI Codex:\nOpenAI Codex is an app that will work for different use cases. To help you decide whether you should get it, I gave a breakdown of the work OpenAI Codex excels at, and when you should avoid using it.\nOpenAI Codex is an excellent fit for:\nIndividual developers looking to improve their workflow. Codex can really speed up development time, especially for smaller-scale tasks that don’t require a team.\nStudents learning to code. Codex can be a very helpful teaching tool, helping students understand various languages and perform code reviews for learners who are just starting out.\nTeams performing rapid prototyping and scripting. If your team needs several versions of software in quick succession, Codex is an excellent assistant.\nFully autonomous coding. Codex isn’t software capable of fully autonomous coding. It requires human-driven prompts to create specific features.\nComplex production systems without review. The more complex a task, the more likely Codex is to make mistakes, potentially affecting production code.\nWindows and Linux users. Until OpenAI releases a desktop app for the two systems, its biggest advantages are limited to macOS.\nOpenAI Codex is an interesting product. By focusing on bringing a usable, intuitive AI coding interface to users, OpenAI challenged competitors like Google Antigravity and Windsurf. Codex is easy to use and delivers fast and effective code, particularly for simpler projects.\nHowever, it’s not perfect by any means. It can struggle with more advanced code and concepts, and doesn’t offer a functioning app for Windows and Linux. This makes it of limited use for larger teams and non-macOS users.\nOpenAI Codex is a desktop coding assistant for macOS that allows you to build entire repositories with natural language-based prompts.\nYes, Codex is better than ChatGPT for coding. Codex uses a purpose-trained GPT model, making it slightly more efficient for coding. However, the biggest advantage is that, being a desktop app, it can manage more complex projects comprising multiple files.\nThis depends on your use case. Codex can be integrated with your IDE just like Copilot, but rather than providing autocomplete and assistance, Codex will generate entire projects.\nCodex is free for a limited time. OpenAI announced that Codex access will be available in its launch stage. Afterwards, it’s likely that Codex’s free version will be very limited.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "hash": "d487f5c41f1d3ec9744f9b0e073480112fdf01ea9a4eff69cb7332346b04638b",
+      "timestamp": "2026-05-01T09:28:19.148Z",
+      "lastUpdated": "2026-05-01T09:28:24.008Z",
+      "type": "scraped"
+    },
+    {
+      "id": "4223142f-ab0b-4d1d-8e06-195818255c13",
+      "title": "GitHub - openai/codex: Lightweight coding agent that runs in your terminal",
+      "content": "npm i -g @openai/codexor brew install --cask codex\nCodex CLI is a coding agent from OpenAI that runs locally on your computer.\nInstall globally with your preferred package manager:\nThen simply run codex to get started.\nEach GitHub Release contains many executables, but in practice, you likely want one of these:\nmacOS Apple Silicon/arm64: codex-aarch64-apple-darwin.tar.gz x86_64 (older Mac hardware): codex-x86_64-apple-darwin.tar.gz\nEach archive contains a single entry with the platform baked into the name (e.g., codex-x86_64-unknown-linux-musl), so you likely want to rename it to codex after extracting it.\nRun codex and select Sign in with ChatGPT. We recommend signing into your ChatGPT account to use Codex as part of your Plus, Pro, Business, Edu, or Enterprise plan. Learn more about what's included in your ChatGPT plan.\nYou can also use Codex with an API key, but this requires additional setup.\nThis repository is licensed under the Apache-2.0 License.",
+      "source": "https://github.com/openai/codex",
+      "hash": "d0682fd14bfd8dfe0bc414e181ba6b5dc2abee247a156cf1fdec3c273b68d40a",
+      "timestamp": "2026-05-01T09:28:20.173Z",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "type": "scraped"
+    },
+    {
+      "id": "743edf7b-2713-4f8c-bab5-e7552b63f85c",
+      "title": "Codex | AI Coding Agent",
+      "content": "A coding agent that helps you build and ship with AI—powered by ChatGPT.\n“At Wonderful, Codex CLI has completely replaced every other agentic harness for our core technology and architecture work requiring deep reasoning and understanding.”\n“At Harvey, Codex transformed how we build by cutting early iteration time by 30–50%, freeing engineers to focus on system design and high-leverage decisions.”\n“With Codex, we ship in a weekend what previously took a quarter. It’s become our go-to for projects we wouldn’t have otherwise been able to take on.”\n“The recent Codex releases have been a step change. Codex PR reviews catch bugs our team would have missed, and we ship with more confidence because of it. Now we’re pulling the CLI and desktop app into more of our workflows—each release raises the bar.”\nAustin Ray, AI Dev X Team Lead, Ramp\n“Codex performed best in our backend Python code-review benchmark. It was the only one to catch tricky backward compatibility issues and consistently found the hard bugs that other bots missed.”\nAaron Wang, Senior Software Engineer, Duolingo\n“I needed to update another team’s codebase for a release. Codex handled the refactor and test generation, delivering fully tested code I handed back fast—keeping the feature on schedule without added risk.”\nTres Wong-Godfrey, Tech Lead, Cisco Meraki",
+      "source": "https://chatgpt.com/codex/",
+      "hash": "2895975f7472b11ae62632ed75e1870e697ae2b9cc6c0109a568092341fd8c2c",
+      "timestamp": "2026-05-01T09:29:27.137Z",
+      "lastUpdated": "2026-05-01T09:29:28.903Z",
+      "type": "scraped"
+    },
+    {
+      "id": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "title": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "content": "OpenAI has rolled out a major update to Codex, significantly expanding its capabilities beyond code generation to support the entire software development lifecycle. The update is aimed at the millions of developers who already rely on the tool to speed up everyday tasks.\nThe latest version allows Codex to work more like an active assistant, capable of interacting directly with a user’s computer, learning preferences, and handling ongoing tasks.\nWith the update, Codex can now operate a computer alongside the user. It can see what’s on screen, click through applications, and type inputs using its own cursor. A variety of AI assistants may even execute multiple operations in parallel, performing necessary actions while minimising interruptions to user productivity.\nThis creates additional opportunities, especially for those developers who need to implement front-end projects, test apps, or operate with software that does not have convenient integrations.\nMoreover, Codex has received an improvement related to its interaction with websites. The tool has a built-in browser that allows users to interact directly with a particular page, adding some commands or notes to control an AI assistant. Such an improvement may be helpful during design iterations, testing various apps or games.\nThis latest update allows Codex to improve in terms of dev ops. The new update allows Codex to review pull requests, handle terminal tabs, and establish an SSH connection to other remote computers.\nFile handling capabilities have been expanded, too. The latest version allows users to view PDF documents, spreadsheets, and other presentation formats. Also, Codex now has an overview panel that shows all the operations performed by an AI assistant, listing their actions, used resources, and results.\nIn order to make Codex even more versatile, OpenAI released over 90 plugins.\nCodex is now able to perform long-term tasks without any problem. It allows users to reuse their earlier dialogues by keeping their context intact. Moreover, Codex can plan its tasks for future use and automatically continue with them.\nCodex can be used for repetitive and timely tasks such as monitoring open tasks, reacting to updates, and keeping track of project workflows through different platforms.\nAnother addition is OpenAI’s memory preview. It will be capable of storing the preferences of the user, correcting the mistakes that occur during previous conversations, and storing all the important information collected in the course of the session. It will also be able to suggest its next job. By assessing all the activities performed through various projects and tools, Codex will identify pending actions and create a priority list.\nThe upgraded Codex features have been deployed for ChatGPT’s desktop users logged into the platform, with computer usage abilities being rolled out currently on the macOS platform. Personalisation abilities such as memory and context suggestions will be available for enterprises and other regions in the coming time.\n01Mental health in focus as Himachal notifies rules to regulate coaching centres\n02‘An extraordinary thing’: Jurassic Park star Sam Neill is cancer-free after revolutionary therapy saved him when chemo failed; an oncologist weighs in\n03Self enumeration for Census to kick off in state from Maharashtra Day\n04In BMC, BJP suffers setback as Wadala proposal fails vote\n05World unprepared for another pandemic, says Ex-NIH director, expresses worry at mRNA research being scaled back in US\nRaja Shivaji Movie Review and Release Live Updates: Riteish Deshmukh-Salman Khan film ‘gives goosebumps,’ say fan reviews; film breaks box office records for Marathi films10 minutes ago\nPatriot Movie Review and Release Live Updates: Mohanlal-Mammootty return in stylish sequel, say X reviews; film earns Rs 2.46 cr till 1 pm15 minutes ago\nCBSE 12th Class Result 2026 Live Updates: When is CBSE declaring results?20 minutes ago\nAP SSC Class 10th Results 2026, Results.bse.ap.gov.in Live Updates: Toppers, pass percentage, revaluation dates26 minutes ago\nIran-US War Ceasefire Live Updates: Trump says gas prices will ‘drop like a rock’; Iran threatens ‘long and painful’ strikes30 minutes ago",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "hash": "6183679e72f0caca3c1e2a46aef0b66dbc86842972170488b128afc24db0474a",
+      "timestamp": "2026-05-01T09:29:27.822Z",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "type": "scraped"
+    },
+    {
+      "id": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "title": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "content": "There is currently a low-grade war between OpenAI and Anthropic over who can release the most convenient and powerful AI-coding tools and, so far, Anthropic seems to be winning. Claude Code has been dubbed the tool of choice for many businesses, as TechCrunch reported last week, but OpenAI isn’t giving up yet.\nThis week, OpenAI announced a revamp of Codex, its own automated tool, with a variety of new updates designed to give it significantly expanded powers.\nOn Thursday, the company announced a plethora of new features and updates, perhaps the most notable of which is that Codex can now operate in the background on your computer — opening any app on your desktop and carrying out operations with a cursor that clicks and types.\nFunctionally, what this does is allow Codex to deploy multiple agents, all of which work on a user’s Mac “in parallel, without interfering with your own work in other apps,” the company said in a blog post. In other words, because of the way Codex runs in the background, a user can still be using the machine as the agent goes about its own work. The agent will then function, according to the company, as a kind of coding buddy that does auxiliary tasks while you work on topline projects. OpenAI’s lists “iterating on frontend changes, testing apps, or working in apps that don’t expose an API” as potential use cases for this kind of agentic assistance.\nOverall, this agentic update and other new additions demonstrate OpenAI’s desire to not only make Codex a competitive coding assistant but also a more multifaceted tool that can be integrated into a variety of corporate workflows.\nWatchers of the AI coding space will also note that some of the powers OpenAI is now adding to Codex seem to resemble those previously released by Anthropic for Claude Code. Last month, Anthropic announced that Claude and Cowork could remotely control your Mac and desktop on a user’s behalf while they were away from their keyboard.\nIn addition to the agentic tools, OpenAI’s Codex now has an in-app browser, which allows a user to issue commands to the agentic tool, which it will then ostensibly carry out on specific web applications. OpenAI says this function will be useful for front-end and game development, and that it plans to eventually expand the capability so that Codex can “fully command the browser beyond web applications on localhost.”\nThere are other updates. A new feature in preview called “memory” allows Codex to recall previous work sessions and generate important context about how a particular user works. The agent has also been given a new image-generation ability, which OpenAI says can be used to create product concepts, slide visuals, mockups, placeholder images, and other corporate paraphernalia. Finally, to expand Codex’s ability to get things done, the company has announced 111 plug-in integrations from apps like CodeRabbit and GitLab Issues, which allows Codex to carry out tasks involving those tools.\nThe way OpenAI has framed it, these plug-ins give Codex the ability to carry out minor clerical work to organize your work life. For example, if you want Codex to take a look at your Slack channels and Google calendar and give you a to-do list for a given day, OpenAI says that it can now do that for you.\nA new pay-as-you-go Codex pricing option for ChatGPT enterprise and business customers has also been announced in an apparent effort to give users more flexibility when it comes to procuring the coding tool’s services.\nOnce considered the undisputed leader of its industry, OpenAI has more fiercely competed with Anthropic in recent months, with a focus on enterprise capabilities and a retreat from consumer tools like its social video app Sora 2. The company has also battled various controversies in recent months, including lawsuits over ChatGPT’s alleged mental health impact on some users.\nWhen you purchase through links in our articles, we may earn a small commission. This doesn’t affect our editorial independence.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "hash": "d194b1487a9d966ef247fbcfc2f1840912922c206ced7b01e574e1249d0a10cb",
+      "timestamp": "2026-05-01T09:28:22.052Z",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "type": "scraped"
+    }
+  ],
+  "facts": [
+    {
+      "id": "41679d28-b562-4f5e-9711-a58c0843fe47",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex is OpenAI’s answer to software like Claude Code and Google Antigravity, a standalone AI coding app for macOS that can also be plugged into your IDE (Integrated Development Environment).",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "da16902eac829fd454c1f204b0662285d1219def3f196fe327582b37b2a7015f",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "f33516db-d203-4e40-9d06-79cb61cd27f5",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex is capable of creating and managing large projects, generating and debugging multiple files.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "995f602119ac3fb2cc5db6764981eacf6faca80306b9c489545e96095dc52383",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "16d90e25-0c6c-4c16-be49-eedf5bb80052",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "OpenAI Codex is a coding assistant designed to help developers, students, and teams quickly build software with AI.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "50bb74ac994ee41acb042cf1fd597bba96b1606640c2b034e7b1e11b9e05c558",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "969255d6-7e6b-4a92-bdcc-7bb00a2183aa",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex can be used in a variety of scenarios, from building web and desktop applications to refactoring and code analysis to code explanation.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "001c5a2871b911e8fab98082a434a7126938a313c059f9a144e8e11a61045067",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "3ddc03d7-4cc5-4079-9b50-1d3a979bc2b3",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Unlike a typical chat-based coding tool, Codex can manage multiple files, building more complex web apps than a canvas-like mode in ChatGPT, Gemini, or Claude.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "1cfedf2ef16218997067a71c7b36da64eba527dd21663de533795f34caf6e3c7",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "343406c2-f396-4ea4-a486-abb1aef09a64",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "The automations offered by Codex are essentially scheduled prompts that it runs at a chosen interval.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "25e43f0b09566a489234dd51ed04a34528cb18eea9d6db182376c8aede76457c",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "02514a38-9513-4ea6-88ee-8fd9bc9e98f9",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Skills, meanwhile, are premade, advanced prompts that use integrations with other software to perform advanced activities, like turning a Figma design into a webpage or generating a video for your website using Sora.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "52b4c8b651cd76becbfe014498f3186205f5cd5157489307a37d357a455327dc",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "4b7d6ecb-f892-4fb9-bf85-8fe7cba81d06",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex can also be accessed via the Cloud, with repositories managed through a GitHub integration.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "0fe3ffe88c2060f3a8878b7c5a323eaeb6dfdd3511a8afc611552bce845eb219",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "32ab5e1e-92f7-4f93-8e7e-3a1ff6bc2978",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "It is also linked to specific code lines in its explanation, making it easy to review and verify the code.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "c42fef42dcdd10ca4196c7e16a026c093803ef26e265647fb1d8cf4e4ea41f67",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "2e3f1199-fe75-4ddb-a89d-086829c166b8",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex is built to turn human intent into working software – fast.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "f356485e2eee7ed698b7cb6be2e1a9201e57571b1a39f6e2495d47c0a7a8b6e9",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "319ab106-914a-4514-8cfa-924d4bb87cbb",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex can use your normal, conversational prompts to create advanced web apps in multiple programming languages and frameworks, including Python, Angular, Node.js, PHP, Swift, Kotlin, and others.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "3db8b8ce1a9710bf03734caae38984ba6564a99a4b98bc23a9ebf5b56b0f62a2",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "5bf50072-6c62-452b-a14f-18f183341718",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "When testing Codex, I found that it understands simple prompts well.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "0b5b109d993e8068023bb70857d4acfb7f6996b029ee6d3d27965a2c6e83ddd9",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "feda3f6b-fa77-437e-8c9e-734d3756092c",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "It did so, although the game had trouble with a few =rules, and even after fixes and my notes, the dimensions and gameplay were still a bit off what they should be.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "9d6a2364f4da866d3ad8b88ea8c11068018f2fad70e46c2820efed8dd13982d5",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "a8460818-6709-4cd9-8938-01c3426cd4e2",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Whenever I asked for a breakdown of code, it would relate to specific lines when doing so.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "e495d45ffd092ac577c8c39afb42734589b3cafb58d76ab1e92d8b1d902b9b7b",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "f09221da-e47e-4619-89ba-342c821a3a2f",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "The breakdowns are clear and easy to understand, even if you don’t have experience with coding.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "a33acf66f444339bc5125e8b61829d0122c27f5728b4f0e3f89340e75c474edb",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "f570b86d-2a8a-46e7-8763-d1fc2fb04ded",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Of course, if you ask for a more technical breakdown, Codex can deliver it and adjust to your knowledge level, giving answers suitable to your abilities.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "a3e0ac3c4ea476baaf64bc1cae225001d606dc2ae4f0db7be15452bc12e7df80",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "ac40c38a-e09a-40ee-917d-1ce766bc6b96",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "All in all, Codex is definitely capable of performing code analysis at a high level.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "05976b5100575e123cc4b0304b8e5e811a3abd11a891aab9bb4fedc09fd879cd",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "12dcb69a-4348-47d7-bf81-18f05a90543d",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "To test OpenAI Codex’s debugging capabilities, I asked Gemini 3 Pro to introduce some hard-to-spot glitches in a simple app.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "0bb3adccaebe2dbd4d13f7827051e9d8f8b97dd2ad86aa21dc4a552ce81159c8",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "335d5ff4-1af5-4d36-bfbc-00dbb8f690ba",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex didn’t have any trouble finding bugs in either of the two scenarios I presented it.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "994b329a1fbf35d1b5aa3e691c78b68ce185f0b9cbbbbcce6992e7512af5131b",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "eb3baba9-1ccc-4f49-94a8-6647f50e5c33",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "OpenAI claims that Codex can support over a dozen programming languages and multiple frameworks.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "3d918e302cb853f6ef83f9cf3faff09333f246a849d1670bccdee62bb8ef897c",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "8d98fbce-161d-4344-8edf-1e72ce04a135",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "However, I found that when writing an app without specific language requirements, it defaults to Python or JavaScript for most tasks.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "91a3b28fc3119019527d0b08d48bf4d95470436524d20da7c9809888a58b738b",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "2aedd2f1-b20c-4d0e-bd1d-280e9dbad908",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "When testing Codex, I asked it to rewrite several ASPs into different languages.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "93007cd7ac6fd8e7d3d5d37732a6ca2cd1878956bd0f0356b349f94cdba5952e",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "8b812091-a265-4957-b938-b6d7878ff9f7",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "The first steps with OpenAI Codex may have been the hardest.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "3d144defef3bb12ebf94b8e821f07170af0b72070d76d65e4e0d072843f9a5d6",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "85685d3d-d6fa-47a9-8b07-d8a971eaff9d",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex requires you to either sync with a GitHub project to use in cloud mode or install a standalone app.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "62b4e51543b8f2bbded1e92ac5b121bd0fc81717619a752dc30c8a375b0abe53",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "748a5f8a-dc49-493e-9bb4-07376d1b6b50",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "It only provides a separate installer for macOS.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "5023509d74dbf34de05e56066808bb1a6ec14459c0f244a0298e66a8364c4acb",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "5502d9f4-db11-4476-ab49-f3dc8a4d22ac",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "It can be used with an IDE like VS Code, but it’s not quite as plug-and-play as its competition.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "23eb42b94783c64780fd8ab0c341912132861cb5f934a69d50220d3ebb3295e8",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "2164dda7-f700-48ae-b128-a3a7008c8c5f",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "This is expected, as Codex isn’t a code for casual, beginner-level coding, but rather an advanced assistant.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "88693e042af2271e5196b9da7c52f17fc8db6c29ee8c61619ee7f638abede9ed",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "082f9cf6-ed2c-4c3c-9007-47b86f2ca386",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "For example, stones would disappear when they shouldn’t, and power was hard to adjust.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "fa33da1aac188f8ba8498b2a4dc5e6680dbcb59bd239b1add4af4bc7bd12a550",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "1d08f709-81cc-45f6-8793-b997ea699340",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "When I asked it for an app that would run in the Windows tray, it immediately chose Python.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "e842500bc1c529ff343309ad486cfd2efc99ae9cfc8d37f34a097d13ab7c1a82",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "e478bb40-7bd5-49f5-b3cf-5b9f5eb7884b",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "When asked for an alternative implementation, Codex chose C#.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "aa8b0e404678ffaaecf1b7c9f5f730e23c3227d78cf596c2a2c22e595c695d57",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "ce17157b-cd03-4f63-a695-dee36e61e36c",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "When looking through community forums and websites like Reddit, I found that the general consensus is positive.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "e8ad5f2da78fcba0608d9a170fb3fc9a93f6e630342e7c29e19bb2b75e58aecf",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "2c2437aa-5f47-447e-a356-0c5c308ea2ec",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Finally, some also pointed out that Codex is having trouble with code refactoring.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "e4107eff212a525963635b04624c41af91e023befb0c0306a3d8be2310aef289",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "537e3074-1a27-4fa9-90e0-99c7be585969",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "OpenAI Codex is based on the same model previously used to create GitHub Copilot, but that isn’t its only competitor.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "80902001221c117c3999b2c7fb19d76b88080e0cfd4c18bc6259ada394778647",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "bd77f0d3-a72a-4080-8ee9-3274e510d15d",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "This means the biggest differentiator in terms of performance was always going to be how fast and how user-friendly each interface was.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "b7b4f37230cfed81c2d2a9cb73a4e116b476e0406b8c5b836ee874daf7419ea5",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "17478c64-b01c-4214-9542-be384b8ee80c",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "OpenAI’s implementation is definitely one of the better ones in terms of usability.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "89c42874904d3a2c5e622a554d74bfc7afbcc1511e0965a6114687c747abf5ba",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "a8ecae3f-be61-468b-bfc5-7e695bfd9520",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "This is something that I have struggled with when testing Google Antigravity, which had trouble setting up all its dependencies in the installation process.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "3d004ff2b22c3094e6f6c942247903ced9182f25a492d9ebb38a5e6b487a9a27",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "636c4968-f248-4d56-babc-d112bccf0d0e",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "I also noticed that Codex is on the faster side when it comes to generating code.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "e06d447c4b812ace8a9c6f02c40c54ed0bcf1ce2da4186e38d3c8db713e12a6c",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "b50844d6-afad-4cad-9c99-0572f460ef34",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "OpenAI Codex is bundled with ChatGPT, starting at $20.00/month.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "cd3a1782e3f495dacdbf72793fac1bac5b29da8fd20ed4be66b9816ce15d1ccb",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "ffe5ac24-40dc-40df-9b7b-e8a69cc38443",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "While it does offer a free version with increased usage limits for a limited time, these are likely to be really restrictive when OpenAI ends its launch phase.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "42c18994f9de14cfbb5f0171a8f5d1ed0ba035839759414888656423913603fb",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "1000415e-bd16-4dcb-849e-7154ffbab705",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Here’s a breakdown of the plans you can pick with OpenAI Codex: OpenAI Codex is an app that will work for different use cases.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "f32577b9a5d08d46d0d0d8d1c458c66ad0ff82cc3077792dfa507d062823a2ba",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "10008550-bbe3-4c35-8ff1-5700576f3d63",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "To help you decide whether you should get it, I gave a breakdown of the work OpenAI Codex excels at, and when you should avoid using it.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "0fd4698943e39e7e082956cd98d7f7e6011c232fafd6248923273b2f10c80828",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "53b5012a-2487-4985-a71c-a0de96e477ff",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "OpenAI Codex is an excellent fit for: Individual developers looking to improve their workflow.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "b225fce257227ff6ccb705d60ef501b011af18c8ac584fee3460775ab2d4e8e2",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "a73e1b0d-450e-4778-bbdd-cb5c34fc5deb",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex can really speed up development time, especially for smaller-scale tasks that don’t require a team.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "a210ecb52affd57e45ddc5b512fee1c989498c95a069cface844826156b6c6cd",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "2d1ca5a3-925f-49c3-8b24-9d49cd41c32a",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex can be a very helpful teaching tool, helping students understand various languages and perform code reviews for learners who are just starting out.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "af26c4eaefb5005739d0b8104dbce028578b9d19955663f5d5d1daaab9dfb65d",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "df1ce9df-2316-4992-baf3-b27325003768",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "If your team needs several versions of software in quick succession, Codex is an excellent assistant.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "e84801304ae9b299a3b219378454112d55f4eca6584a2f46eba765b31d97bf1d",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "a64b65f3-1fa8-4650-9957-16f22e5c0ebe",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "It requires human-driven prompts to create specific features.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "c3582d33ade83bf13df2824f69293f2c812fedac9053e4f47e2b1dfc4ce7da97",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "3b38f8fe-1253-4b2f-842a-069c30a4c66c",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "The more complex a task, the more likely Codex is to make mistakes, potentially affecting production code.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "267d798681db9439b9d0d3691e6cb5691ab104e92a87b1c7f95cfb325eb19ad6",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "eafbaff7-5420-4761-85c6-5d3a31c1f4fc",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Until OpenAI releases a desktop app for the two systems, its biggest advantages are limited to macOS.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "641a918cfb6cee2f8db7b1b6b3fab28897729bb3cb6827bd0c4a5d6b72dd2525",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "170d343b-8e5d-4ef3-b675-aef897375adc",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "OpenAI Codex is an interesting product.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "dc171d48ad1370b9136bc4fc5eabec049357eab6831165ea230edff11cfe6535",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "8e90aaa3-1f4d-40da-803a-1ffb42c8eec5",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex is easy to use and delivers fast and effective code, particularly for simpler projects.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "c4aec58911bb1cc0b2b95092f9b19c71f5d24455404c3978307b7261f9f264e4",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "581490fd-f6c1-40cf-b56f-d16809b882de",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "However, it’s not perfect by any means.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "0e87e0a9b0bcc22d8fbbf976f68c153353233623a99393c1b2a317ccd6943b41",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "12255e99-833e-4c78-b708-c54c338ada7b",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "It can struggle with more advanced code and concepts, and doesn’t offer a functioning app for Windows and Linux.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "1b9e488f1e98a9225d2b5f2c1ce176f6514ba272fbf50c211db868d4f43f2762",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "ff61f892-d426-4789-b23a-ad1c94a8d4cd",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "OpenAI Codex is a desktop coding assistant for macOS that allows you to build entire repositories with natural language-based prompts.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "c94d1b4c02bb5c97a01d452b698d9408687d0db42ef0706cefcf140cae51a6db",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "f330013e-72d2-4fce-9246-e7f3497bce01",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Yes, Codex is better than ChatGPT for coding.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "963a2ba7a6453c45d51615c4b6d0fbd275cddee7d03817f52cced9da9249fbaa",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "98e3edad-c784-4b6c-bdc4-7da99940d2dc",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex uses a purpose-trained GPT model, making it slightly more efficient for coding.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "0dca561474812c93f7f29bb14fd1080e505bff949ad8134e6f09d00843377cf9",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "e7a39aec-c489-44df-b551-7aa9649098f4",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "However, the biggest advantage is that, being a desktop app, it can manage more complex projects comprising multiple files.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "d96a1e028533fffd71d707cbdbecaed01d6006df816cd4af24f5366a0b8b751a",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "ccaf63d2-2714-4779-8ab8-63468f47ec43",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex can be integrated with your IDE just like Copilot, but rather than providing autocomplete and assistance, Codex will generate entire projects.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "e449083a923aaab55ab40678e9f5ca8923004497bdd7e8b74535b47b29003650",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "1b6bb2be-028d-4c1d-ae27-beb5622f644d",
+      "documentId": "9cef99a4-eb49-4504-8bdc-6adaa9730e9a",
+      "text": "Codex is free for a limited time.",
+      "source": "https://cybernews.com/ai-tools/openai-codex-app-review/",
+      "topic": "OpenAI Codex App Review (2026): Can It Write and Understand Code?",
+      "hash": "8fb8b77f9b947226cb7451e026c641a13f3c6abd4ef611d7e2ba3f7fd279d059",
+      "lastUpdated": "2026-05-01T09:28:24.009Z",
+      "weight": 1
+    },
+    {
+      "id": "a3b861a5-8b34-41f5-9c6d-90da441acf74",
+      "documentId": "4223142f-ab0b-4d1d-8e06-195818255c13",
+      "text": "npm i -g @openai/codexor brew install --cask codex Codex CLI is a coding agent from OpenAI that runs locally on your computer.",
+      "source": "https://github.com/openai/codex",
+      "topic": "GitHub - openai/codex: Lightweight coding agent that runs in your terminal",
+      "hash": "9d9ed235704671299a14dfd222cdc2ded0ef9f849b9b86fdee8f6b39d49eb94f",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "0f8b1876-22d7-46b4-b69a-41cdab7b4481",
+      "documentId": "4223142f-ab0b-4d1d-8e06-195818255c13",
+      "text": "Each GitHub Release contains many executables, but in practice, you likely want one of these: macOS Apple Silicon/arm64: codex-aarch64-apple-darwin.tar.gz x86_64 (older Mac hardware): codex-x86_64-apple-darwin.tar.gz Each archive contains a single entry with the platform baked into the name (e.g., codex-x86_64-unknown-linux-musl), so you likely want to rename it to codex after extracting it.",
+      "source": "https://github.com/openai/codex",
+      "topic": "GitHub - openai/codex: Lightweight coding agent that runs in your terminal",
+      "hash": "2a589283b7da511938d434460d0ea67a18b93e20791e1d3e6870f5fcdf21834d",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "42699507-4642-47b9-b489-ae12c5b81cb0",
+      "documentId": "4223142f-ab0b-4d1d-8e06-195818255c13",
+      "text": "You can also use Codex with an API key, but this requires additional setup.",
+      "source": "https://github.com/openai/codex",
+      "topic": "GitHub - openai/codex: Lightweight coding agent that runs in your terminal",
+      "hash": "0e510c50006c0347f837036241a2e809f4c738e520a5c35ec2aaceb1786a3a8c",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "b29beb50-059c-4cfb-8ba5-ccd10d06f0e3",
+      "documentId": "4223142f-ab0b-4d1d-8e06-195818255c13",
+      "text": "This repository is licensed under the Apache-2.0 License.",
+      "source": "https://github.com/openai/codex",
+      "topic": "GitHub - openai/codex: Lightweight coding agent that runs in your terminal",
+      "hash": "cdb5289b343b99e475a6748f9eabbf905b21053070ff1406ca128c0c51ce4613",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "926378d5-2936-4c1d-9dc9-f46ad4e57e58",
+      "documentId": "743edf7b-2713-4f8c-bab5-e7552b63f85c",
+      "text": "“At Wonderful, Codex CLI has completely replaced every other agentic harness for our core technology and architecture work requiring deep reasoning and understanding.” “At Harvey, Codex transformed how we build by cutting early iteration time by 30–50%, freeing engineers to focus on system design and high-leverage decisions.” “With Codex, we ship in a weekend what previously took a quarter.",
+      "source": "https://chatgpt.com/codex/",
+      "topic": "Codex | AI Coding Agent",
+      "hash": "f52cc3d28d3be3313b90a443a0175b553a8d6127025e5f992893fcb354c4cb42",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "5a35f358-b8d8-416b-b5f7-e10185687ffc",
+      "documentId": "743edf7b-2713-4f8c-bab5-e7552b63f85c",
+      "text": "It’s become our go-to for projects we wouldn’t have otherwise been able to take on.” “The recent Codex releases have been a step change.",
+      "source": "https://chatgpt.com/codex/",
+      "topic": "Codex | AI Coding Agent",
+      "hash": "01e99b38985a80ccc44077d53e30c69eacf97a6ee722670efb4ba77215ba67e4",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "d2d14f76-901b-4cce-9e07-6f89f14ba66d",
+      "documentId": "743edf7b-2713-4f8c-bab5-e7552b63f85c",
+      "text": "Codex PR reviews catch bugs our team would have missed, and we ship with more confidence because of it.",
+      "source": "https://chatgpt.com/codex/",
+      "topic": "Codex | AI Coding Agent",
+      "hash": "2629d78b09483c0fc7d758edf9d25b9f59ca5c49fa6a9465d81896e7421a2892",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "35fc36bd-2cc1-4820-9d40-98e9a4e6b3fa",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "OpenAI has rolled out a major update to Codex, significantly expanding its capabilities beyond code generation to support the entire software development lifecycle.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "1eaa9dae5586674fd1ec416f1a450c2b1b20ce7736c621da279d867fcf2b4e66",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "5c2a752d-e464-4e3c-b3cd-08e745ed4f83",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "The update is aimed at the millions of developers who already rely on the tool to speed up everyday tasks.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "de2617d2742c882cd1d42fc04eb499d19bb44ce0884e89efc80b9c90977fade5",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "dfcb58f9-d4b9-493d-9cd4-7e5c3b066590",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "With the update, Codex can now operate a computer alongside the user.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "30c438f80d688759ad53423b050e5d0e903ff71796021cd843a8eb9e968da148",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "82b77e12-3848-4b32-957f-d3892c5f4469",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "It can see what’s on screen, click through applications, and type inputs using its own cursor.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "04b6b35afe19f84adf8ba4800b956b05c4a869fe13dc9c501541fafcc570be16",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "1dc4912e-7ac9-4308-bc10-cdab4585aef9",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "A variety of AI assistants may even execute multiple operations in parallel, performing necessary actions while minimising interruptions to user productivity.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "dce7fc518a6cef167624812847796892c5e46f85a208f89ae186f5cd1228648f",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "410efd97-c724-4ee8-accb-75d858425560",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "This creates additional opportunities, especially for those developers who need to implement front-end projects, test apps, or operate with software that does not have convenient integrations.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "c75489fe5ec814374c0457516d3251ee06efadffe99117a2b20ffd100b55942e",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "5a97b903-256e-4ff1-aaab-5a865f096e67",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "Moreover, Codex has received an improvement related to its interaction with websites.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "8cb7f09966d3f020f282a2e8cc5d29c9c96da55fa9f9e9eb8e22ae31e889db88",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "d43a4548-0aee-4e94-9b63-2e513639dc16",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "The tool has a built-in browser that allows users to interact directly with a particular page, adding some commands or notes to control an AI assistant.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "07c2135aff5e51e72196236480af1454f629056f150a18d112a32e06c8c78554",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "f6d979f8-4f25-41eb-a10a-acb7760a082d",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "Such an improvement may be helpful during design iterations, testing various apps or games.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "e507419be20dd9d62fce88fce0904118a367dd4aa1fbffe654140a892173c89c",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "a18188c5-c01b-4876-9a16-d771944ea250",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "File handling capabilities have been expanded, too.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "0178adef7cd4b409fd933d683434b7b340d681f09b0d3b3ee2a092d38c69ebc0",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "e82451eb-11a1-4dba-b365-27c58de439f2",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "Also, Codex now has an overview panel that shows all the operations performed by an AI assistant, listing their actions, used resources, and results.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "16cf6a853708e2bb5de11e6a038578afb60be97df205bedb6a8234654438bf1d",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "8a57c7c7-98ef-4acd-a167-1e151e4bfb80",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "In order to make Codex even more versatile, OpenAI released over 90 plugins.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "c234e22e02628dc872964a50b7752152f0762ea2af89e1c9791d559e285e3ad6",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "1c4fdd88-a0f1-4d14-bcce-8f6f3bf0e93b",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "Codex is now able to perform long-term tasks without any problem.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "783bb2b6c1391d9aa03134947a42201aa618a2b2e43698a56bec0f101b9aa26b",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "53e11804-5543-4968-8968-f3c6b764ef2a",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "Moreover, Codex can plan its tasks for future use and automatically continue with them.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "51e0287afb34b305433f8af0b264bfbfd55b38aebb4973f76c4dc392961d8585",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "cfab9634-0db0-43bf-a7d2-990dd70e2044",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "Codex can be used for repetitive and timely tasks such as monitoring open tasks, reacting to updates, and keeping track of project workflows through different platforms.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "ed1d7dc1880ad4229bed8c3346d63c015e189f0265daa5c079e8d33cbce12359",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "2dd86972-3173-4376-acdf-dffb485a5149",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "Another addition is OpenAI’s memory preview.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "dfb783ac7668ffc261cc06ae68569049baf0b4324ba3e3221ff685e5651766ce",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "8cd03df3-7e2d-40a2-a72e-f082838e95d0",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "The upgraded Codex features have been deployed for ChatGPT’s desktop users logged into the platform, with computer usage abilities being rolled out currently on the macOS platform.",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "273ca4bd1e0ccb1506d8e80d70795f789ce1ebe012a23e238010ac5047d84772",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "d67c1afe-0c6e-4cea-8807-143aac01a7bb",
+      "documentId": "9bd14034-66eb-4533-8c07-471a1a93ed2e",
+      "text": "01Mental health in focus as Himachal notifies rules to regulate coaching centres 02‘An extraordinary thing’: Jurassic Park star Sam Neill is cancer-free after revolutionary therapy saved him when chemo failed; an oncologist weighs in 03Self enumeration for Census to kick off in state from Maharashtra Day 04In BMC, BJP suffers setback as Wadala proposal fails vote 05World unprepared for another pandemic, says Ex-NIH director, expresses worry at mRNA research being scaled back in US Raja Shivaji Movie Review and Release Live Updates: Riteish Deshmukh-Salman Khan film ‘gives goosebumps,’ say fan reviews; film breaks box office records for Marathi films10 minutes ago Patriot Movie Review and Release Live Updates: Mohanlal-Mammootty return in stylish sequel, say X reviews; film earns Rs 2.46 cr till 1 pm15 minutes ago CBSE 12th Class Result 2026 Live Updates: When is CBSE declaring results?20 minutes ago AP SSC Class 10th Results 2026, Results.bse.ap.gov.in Live Updates: Toppers, pass percentage, revaluation dates26 minutes ago Iran-US War Ceasefire Live Updates: Trump says gas prices will ‘drop like a rock’; Iran threatens ‘long and painful’ strikes30 minutes ago",
+      "source": "https://indianexpress.com/article/technology/tech-news-technology/openai-expands-codex-beyond-coding-with-new-ai-capabilities-10641645/",
+      "topic": "OpenAI expands Codex beyond coding with new AI capabilities",
+      "hash": "042d8391c213ac0ed0844cf20d71a8c5f10554e18bf60926e99fbf3bb9b16edd",
+      "lastUpdated": "2026-05-01T09:29:28.904Z",
+      "weight": 1
+    },
+    {
+      "id": "da31fcea-8a96-4f16-a9db-ef981f2dd4a8",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "There is currently a low-grade war between OpenAI and Anthropic over who can release the most convenient and powerful AI-coding tools and, so far, Anthropic seems to be winning.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "bc040aa6eda3e7132319e9318c7f1e4b2e9a1708e3a9480ef6c26e0fa911a307",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "749bd3d8-8cb1-4026-9d7d-2a316dfd990f",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "Claude Code has been dubbed the tool of choice for many businesses, as TechCrunch reported last week, but OpenAI isn’t giving up yet.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "6c97e02496cf253cd95eb707b4a231a3d2673047bd9cabd3a2848416132d2a5b",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "f3e11a6d-6f4b-41d2-abef-3a377109cd86",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "On Thursday, the company announced a plethora of new features and updates, perhaps the most notable of which is that Codex can now operate in the background on your computer — opening any app on your desktop and carrying out operations with a cursor that clicks and types.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "ae9672190758684bdd388901a494861f399975ceef738a3957dfd56b5e4fb5ab",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "d312bf77-4fca-4d2f-9cc3-51ef27ac7f7d",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "Functionally, what this does is allow Codex to deploy multiple agents, all of which work on a user’s Mac “in parallel, without interfering with your own work in other apps,” the company said in a blog post.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "f3a148c923bee3887e15a1449a83678bc6e4bb6c67f9843f921c4e6f34d21b3c",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "479ac895-f8c5-43ed-a449-9d574d0cbd72",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "In other words, because of the way Codex runs in the background, a user can still be using the machine as the agent goes about its own work.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "087bb2883f9c8b3160b159d3fb095bb1f3716bd6c1768f0f6caf663e261964a5",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "c1494a5e-16d2-4dfa-bdfb-848d9bda6023",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "Overall, this agentic update and other new additions demonstrate OpenAI’s desire to not only make Codex a competitive coding assistant but also a more multifaceted tool that can be integrated into a variety of corporate workflows.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "21fc6fa920b5e27cce9a8d3e1413e327c44152dec66bec07f90ee0a346c16905",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "94a0391d-a8bd-4c5a-ae4c-a60889ee459d",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "Watchers of the AI coding space will also note that some of the powers OpenAI is now adding to Codex seem to resemble those previously released by Anthropic for Claude Code.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "9831d46b290684a0699c866ed967338856c0d473a6c19082d1eef6809686abe9",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "aa4c8502-0d84-4677-a3d6-907b6a41ce55",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "In addition to the agentic tools, OpenAI’s Codex now has an in-app browser, which allows a user to issue commands to the agentic tool, which it will then ostensibly carry out on specific web applications.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "7290a8524b7486e5a4e6b676bcc731146352e510400e769ec792b73fbfe5afa6",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "8e5a6a3c-1723-4429-8169-f7f17b6d65b8",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "OpenAI says this function will be useful for front-end and game development, and that it plans to eventually expand the capability so that Codex can “fully command the browser beyond web applications on localhost.” There are other updates.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "31a619f595a0f27e40c48dedea9abe62aa3a1238fa044554b07683ee2da767e8",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "c4a40585-956f-4bc8-806d-283422cba724",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "The agent has also been given a new image-generation ability, which OpenAI says can be used to create product concepts, slide visuals, mockups, placeholder images, and other corporate paraphernalia.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "76b29931e42d49b370c59c0066d2f0fdd940b0f44f931baa75ded0e71389e32d",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "0e208239-bb15-4579-920c-665b04cfaf7e",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "Finally, to expand Codex’s ability to get things done, the company has announced 111 plug-in integrations from apps like CodeRabbit and GitLab Issues, which allows Codex to carry out tasks involving those tools.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "8cb36fb977c3c69d3d7de43239f324344cbd279f5147d06c7554ba1aaa9ab705",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "5ff7969a-84df-4977-aef3-8238e73e6a27",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "The way OpenAI has framed it, these plug-ins give Codex the ability to carry out minor clerical work to organize your work life.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "40869b01751dcd38694dc3b29b2ec184bc20a81f7e8a379962902b11f1f5d989",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "514e52ff-8b2b-403d-a6f2-a55aa42f049b",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "For example, if you want Codex to take a look at your Slack channels and Google calendar and give you a to-do list for a given day, OpenAI says that it can now do that for you.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "88ccb0e15e2d9978a78c719f63b21d5ba5a3ca92f8cce67d3e46a91d6d5e9d51",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "026d9d0d-b2fa-415a-b015-cbfb2ef71037",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "A new pay-as-you-go Codex pricing option for ChatGPT enterprise and business customers has also been announced in an apparent effort to give users more flexibility when it comes to procuring the coding tool’s services.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "c8164249e741deb5a1a59f9486bafdb069011cf4691b7e255f73728a80d1d203",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "153e333a-e137-4da4-be3b-af2347d036fe",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "Once considered the undisputed leader of its industry, OpenAI has more fiercely competed with Anthropic in recent months, with a focus on enterprise capabilities and a retreat from consumer tools like its social video app Sora 2.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "40a1e78b973e6f2f224345f28abaf8e16d604791fbd7d7c0b8e5117e585101d3",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "d6f72079-231c-4dae-a227-52e13b30e164",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "The company has also battled various controversies in recent months, including lawsuits over ChatGPT’s alleged mental health impact on some users.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "6a4f6ad0fdeb5e86c0dda2026c291ba3056bb5208a0fca61b11e14aee8b84d8d",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    },
+    {
+      "id": "d2afc68f-1ebe-4a51-842b-9664e7969eaa",
+      "documentId": "e6dbb254-aa70-4947-ac7e-8a205349d8da",
+      "text": "When you purchase through links in our articles, we may earn a small commission.",
+      "source": "https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/",
+      "topic": "OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop | TechCrunch",
+      "hash": "3dc1f1b482bd45d638149e4e6ffc81914f6e5fab774ab16450c8cf0a81dc49bd",
+      "lastUpdated": "2026-05-01T09:28:24.010Z",
+      "weight": 1
+    }
+  ],
+  "approvedAnswers": [],
+  "feedback": [],
+  "queries": [
+    {
+      "id": "2cd4f1db-18e9-4a60-a6f1-0ae590bf8117",
+      "query": "What is OpenAI Codex?",
+      "answer": "No sufficient local data found",
+      "confidence": 0,
+      "sourceCount": 0,
+      "createdAt": "2026-05-01T09:28:16.767Z"
+    },
+    {
+      "id": "2b85322d-3f56-4277-ba67-cea032991562",
+      "query": "What is OpenAI Codex?",
+      "answer": "Until OpenAI releases a desktop app for the two systems, its biggest advantages are limited to macOS. OpenAI Codex is an interesting product. By focusing on bringing a usable, intuitive AI coding interface to users, OpenAI challenged competitors like Google Antigravity and Windsurf.\n\nOpenAI Codex is bundled with ChatGPT, starting at $20.00/month.",
+      "confidence": 0.36,
+      "sourceCount": 3,
+      "createdAt": "2026-05-01T09:28:24.036Z"
+    },
+    {
+      "id": "859559b4-7c81-4e94-b1eb-db382e79657b",
+      "query": "What is OpenAI Codex?",
+      "answer": "npm i -g @openai/codexor brew install --cask codex Codex CLI is a coding agent from OpenAI that runs locally on your computer.\n\nnpm i -g @openai/codexor brew install --cask codex Codex CLI is a coding agent from OpenAI that runs locally on your computer.",
+      "confidence": 0.36,
+      "sourceCount": 3,
+      "createdAt": "2026-05-01T09:29:21.880Z"
+    },
+    {
+      "id": "ebc084f6-172d-49b3-b514-43dca6818451",
+      "query": "What is OpenAI Codex?",
+      "answer": "npm i -g @openai/codexor brew install --cask codex Codex CLI is a coding agent from OpenAI that runs locally on your computer.\n\nnpm i -g @openai/codexor brew install --cask codex Codex CLI is a coding agent from OpenAI that runs locally on your computer.",
+      "confidence": 0.36,
+      "sourceCount": 3,
+      "createdAt": "2026-05-01T09:29:28.925Z"
+    }
+  ]
+}

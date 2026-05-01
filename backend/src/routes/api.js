@@ -1,6 +1,7 @@
 import express from "express";
 import { z } from "zod";
 import { scrapeUrls } from "../services/scraper.js";
+import { searchWeb } from "../services/webSearch.js";
 
 const askSchema = z.object({
   query: z.string().trim().min(1).max(1000)
@@ -44,7 +45,50 @@ export function createApiRouter({ engine, scrapeState }) {
 
   router.post("/ask", async (request, response) => {
     const input = askSchema.parse(request.body);
-    response.json(await engine.ask(input.query));
+    const localAnswer = await engine.ask(input.query);
+    if (localAnswer.intent === "conversation" || localAnswer.confidence >= 0.45) {
+      response.json(localAnswer);
+      return;
+    }
+
+    if (scrapeState.active) {
+      response.json({ ...localAnswer, research: { attempted: false, reason: "Scraping is already running." } });
+      return;
+    }
+
+    scrapeState.active = true;
+    try {
+      const searchResults = await searchWeb(input.query, { limit: 8 });
+      const result = await scrapeUrls(searchResults.map((item) => item.source), {
+        depth: 0,
+        maxPages: 8
+      });
+      if (result.documents.length) {
+        await engine.addScrapedDocuments(result.documents);
+      }
+      const researchedAnswer = await engine.ask(input.query);
+      response.json({
+        ...researchedAnswer,
+        research: {
+          attempted: true,
+          searched: searchResults.length,
+          scraped: result.documents.length,
+          errors: result.errors
+        }
+      });
+    } catch (error) {
+      response.json({
+        ...localAnswer,
+        research: {
+          attempted: true,
+          searched: 0,
+          scraped: 0,
+          errors: [{ error: error.message }]
+        }
+      });
+    } finally {
+      scrapeState.active = false;
+    }
   });
 
   router.post("/learn", async (request, response) => {

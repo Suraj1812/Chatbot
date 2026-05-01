@@ -1,10 +1,17 @@
 import { v4 as uuid } from "uuid";
 import { BM25Index } from "./bm25.js";
-import { splitChunks, splitSentences, tokenize } from "./tokenizer.js";
+import { splitChunks, splitSentences, tokenize, tokenOverlap, uniqueTokens } from "./tokenizer.js";
 import { hashText } from "../utils/hash.js";
 import { detectConversationIntent } from "./intentEngine.js";
 
 const NO_DATA_ANSWER = "No sufficient local data found";
+const ANSWER_THRESHOLD = 0.42;
+
+const ACTION_TOKENS = new Set([
+  "best", "better", "choose", "compare", "create", "define", "difference", "example",
+  "explain", "find", "get", "list", "make", "mean", "meaning", "need", "overview",
+  "question", "search", "should", "summary", "tell", "want"
+]);
 
 function isFactLike(sentence) {
   return /\b(is|are|means|contains|requires|should|can|may|because|when|if|has|have|provides|stores|uses|supports)\b/i.test(sentence) ||
@@ -31,6 +38,93 @@ function compactSources(results) {
   }])).values()].slice(0, 5);
 }
 
+function questionKind(query) {
+  const normalized = query.trim().toLowerCase();
+  if (/^(what is|what are|who is|who are|define|tell me about)\b/.test(normalized)) return "definition";
+  if (/^(how|how do|how does|how to)\b/.test(normalized)) return "how";
+  if (/^(why)\b/.test(normalized)) return "why";
+  return "general";
+}
+
+function queryCoreTokens(query) {
+  const tokens = uniqueTokens(query).filter((token) => !ACTION_TOKENS.has(token));
+  return tokens.length ? tokens : uniqueTokens(query);
+}
+
+function hostFromSource(source) {
+  try {
+    return new URL(source).hostname.replace(/^www\./, "");
+  } catch {
+    return String(source || "");
+  }
+}
+
+function sourceQuality(result, coreTokens) {
+  let score = 0;
+  if (result.type === "approved-answer") score += 2;
+  if (result.type === "learned" || result.source === "manual") score += 0.6;
+  if (/^https:\/\//i.test(result.source || "")) score += 0.2;
+
+  const host = hostFromSource(result.source);
+  const hostTokens = uniqueTokens(host.replace(/[.-]/g, " "));
+  const titleTokens = result.titleTokens || uniqueTokens(result.title || "");
+  score += tokenOverlap(coreTokens, titleTokens) * 0.7;
+  score += tokenOverlap(coreTokens, hostTokens) * 0.5;
+
+  if (/\b(blog|news|docs|developer|support|help|learn|guide|wiki|wikipedia)\b/i.test(host)) score += 0.1;
+  if (/\b(pinterest|facebook|instagram|x\.com|twitter|reddit)\b/i.test(host)) score -= 0.6;
+  return score;
+}
+
+function sentenceQuality(text, kind, coreTokens = []) {
+  const value = String(text || "").trim();
+  let score = 0;
+  const words = value.split(/\s+/).filter(Boolean);
+  const lower = value.toLowerCase();
+  const textTokens = uniqueTokens(value);
+  const directOverlap = tokenOverlap(coreTokens, textTokens);
+
+  if (words.length >= 8 && words.length <= 45) score += 0.8;
+  if (words.length > 70) score -= 0.5;
+  if (words.length < 5) score -= 1;
+  if (/\?$/.test(value)) score -= 1.2;
+  if (/\b(click|subscribe|sign up|cookie|advertisement|buy now|all rights reserved|privacy policy|terms of use)\b/i.test(value)) score -= 1.2;
+  if (/\b(npm|brew|install|download|pricing|plans?|bundled|month|competitors?|advantages?)\b|\$\d/i.test(value)) score -= 0.8;
+  if (/^(npm|brew|pip|pnpm|yarn|curl)\b/i.test(value)) score -= 3;
+  if (/\binteresting product|biggest advantage|challenged competitors\b/i.test(value)) score -= 1.1;
+  if (/\b(api reference|breakdown of the plans|here'?s a breakdown)\b/i.test(value)) score -= 0.6;
+  if (/(.)\1{5,}/.test(lower)) score -= 0.8;
+  if (coreTokens.length && directOverlap === 0) score -= 1.4;
+  if (directOverlap >= 0.5) score += 0.9;
+
+  if (kind === "definition") {
+    if (/\b(is|are|refers to|means|is a|is an)\b/i.test(value)) score += 1.2;
+    if (/\b(ai|artificial intelligence|agent|assistant|developer|software|system|tool|platform|service|model|application)\b/i.test(value)) score += 0.8;
+    if (/^(what|how|why|when|where)\b/i.test(value)) score -= 1;
+  }
+
+  if (kind === "how" && /\b(step|use|start|create|install|run|configure|works|process)\b/i.test(value)) score += 0.8;
+  if (kind === "why" && /\b(because|reason|due to|caused by|so that)\b/i.test(value)) score += 0.8;
+  return score;
+}
+
+function normalizeAnswerText(text) {
+  return String(text || "")
+    .replace(/\s+/g, " ")
+    .replace(/\s+([,.!?;:])/g, "$1")
+    .trim();
+}
+
+function dedupeByMeaning(results) {
+  const seen = new Set();
+  return results.filter((result) => {
+    const key = normalizeAnswerText(result.text).toLowerCase().replace(/[^a-z0-9 ]/g, "").slice(0, 160);
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export class KnowledgeEngine {
   constructor(db) {
     this.db = db;
@@ -44,7 +138,7 @@ export class KnowledgeEngine {
     const chunks = [];
 
     for (const document of this.db.data.documents) {
-      splitChunks(document.content).forEach((text, index) => {
+      splitChunks(document.content, 1).forEach((text, index) => {
         chunks.push({
           id: `${document.id}:chunk:${index}`,
           documentId: document.id,
@@ -88,6 +182,10 @@ export class KnowledgeEngine {
     await this.db.write();
   }
 
+  isAnswerSufficient(answer) {
+    return answer?.intent === "conversation" || (answer?.answer !== NO_DATA_ANSWER && answer?.confidence >= ANSWER_THRESHOLD);
+  }
+
   upsertDocument(input) {
     const now = new Date().toISOString();
     const hash = input.hash || hashText(`${input.title}\n${input.content}`);
@@ -112,6 +210,7 @@ export class KnowledgeEngine {
       this.db.data.documents.push(document);
     }
 
+    this.db.data.facts = this.db.data.facts.filter((fact) => fact.documentId !== document.id);
     this.extractFacts(document);
     return document;
   }
@@ -182,14 +281,28 @@ export class KnowledgeEngine {
   }
 
   buildAnswer(query, results) {
-    const queryTokens = tokenize(query, { expand: true });
-    const candidates = results
+    const queryTokens = uniqueTokens(query, { expand: true });
+    const coreTokens = queryCoreTokens(query);
+    const kind = questionKind(query);
+    const candidates = dedupeByMeaning(results
       .map((result) => ({
         ...result,
-        overlap: result.matchedTokens.length / Math.max(queryTokens.length, 1)
+        overlap: result.matchedTokens.length / Math.max(queryTokens.length, 1),
+        textOverlap: tokenOverlap(coreTokens, result.textTokens || uniqueTokens(result.text)),
+        titleOverlap: tokenOverlap(coreTokens, result.titleTokens || uniqueTokens(result.title || "")),
+        answerScore: result.score +
+          sentenceQuality(result.text, kind, coreTokens) +
+          sourceQuality(result, coreTokens)
       }))
-      .filter((result) => result.overlap >= Math.min(0.5, 2 / Math.max(queryTokens.length, 1)))
-      .slice(0, 4);
+      .filter((result) => {
+        const minimumOverlap = Math.min(0.5, 2 / Math.max(queryTokens.length, 1));
+        const hasQuestionTermInText = result.textOverlap >= Math.min(0.5, 1 / Math.max(coreTokens.length, 1));
+        const hasStrongTitleMatch = result.titleOverlap >= 0.7 && sentenceQuality(result.text, kind, coreTokens) > 0.2;
+        return result.overlap >= minimumOverlap && (hasQuestionTermInText || hasStrongTitleMatch);
+      })
+      .filter((result) => sentenceQuality(result.text, kind, coreTokens) > -0.35)
+      .sort((left, right) => right.answerScore - left.answerScore))
+      .slice(0, 5);
 
     if (!candidates.length) return "";
 
@@ -197,8 +310,8 @@ export class KnowledgeEngine {
     if (approved && approved.overlap >= 0.5) return approved.text;
 
     return candidates
-      .slice(0, 3)
-      .map((result) => result.text)
+      .slice(0, kind === "definition" ? 2 : 4)
+      .map((result) => normalizeAnswerText(result.text))
       .join("\n\n");
   }
 
@@ -207,7 +320,12 @@ export class KnowledgeEngine {
     const top = results[0]?.score || 0;
     const second = results[1]?.score || 0;
     const sourceCount = new Set(results.slice(0, 5).map((result) => result.source)).size;
-    const raw = top * 0.11 + (top - second) * 0.05 + Math.min(sourceCount, 3) * 0.12 - contradictions.length * 0.2;
+    const supported = results.slice(0, 5).filter((result) => answer.includes(result.text.slice(0, Math.min(80, result.text.length)))).length;
+    const raw = Math.min(top / 9, 0.48) +
+      Math.min(Math.max(top - second, 0) / 10, 0.12) +
+      Math.min(sourceCount, 4) * 0.08 +
+      Math.min(supported, 3) * 0.06 -
+      contradictions.length * 0.18;
     return Number(Math.max(0, Math.min(1, raw)).toFixed(2));
   }
 

@@ -1,7 +1,33 @@
 {
   "documents": [],
   "facts": [],
-  "approvedAnswers": [],
-  "feedback": [],
-  "queries": []
+  "approvedAnswers": [
+    {
+      "id": "c5164929-6d69-4e64-97b7-49364e3fad8a",
+      "query": "hello",
+      "answer": "Hi! I’m ready. Ask me anything from your local data, or add new data from the Data panel.",
+      "hash": "66a0d0cdd7530825a4784f0691f62cfcf8a512b6088f334b60da331568543e3f",
+      "weight": 2,
+      "lastUpdated": "2026-05-01T09:23:06.449Z"
+    }
+  ],
+  "feedback": [
+    {
+      "id": "905772ac-cc3f-498f-a52c-83b337660204",
+      "query": "hello",
+      "answer": "Hi! I’m ready. Ask me anything from your local data, or add new data from the Data panel.",
+      "rating": "good",
+      "createdAt": "2026-05-01T09:23:06.449Z"
+    }
+  ],
+  "queries": [
+    {
+      "id": "42a647b5-8ee1-4ac9-8485-ae5c6fb2f11e",
+      "query": "who is modi",
+      "answer": "No sufficient local data found",
+      "confidence": 0,
+      "sourceCount": 0,
+      "createdAt": "2026-05-01T09:23:12.005Z"
+    }
+  ]
 }

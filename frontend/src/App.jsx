@@ -11,7 +11,7 @@ import { useChatStore } from "./store/chatStore.js";
 export default function App() {
   const [dataOpen, setDataOpen] = useState(false);
   const bottomRef = useRef(null);
-  const { messages, loading, health, ask, feedback, refreshHealth } = useChatStore();
+  const { messages, loading, loadingLabel, health, ask, feedback, refreshHealth } = useChatStore();
 
   useEffect(() => {
     refreshHealth().catch((error) => toast.error(apiError(error)));
@@ -58,7 +58,7 @@ export default function App() {
           {loading && (
             <div className="flex items-center gap-2 text-sm text-muted">
               <Loader2 size={16} className="animate-spin" />
-              Thinking
+              {loadingLabel || "Thinking"}
             </div>
           )}
           <div ref={bottomRef} />

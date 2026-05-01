@@ -26,6 +26,11 @@ export function Message({ message, onFeedback }) {
                   {source.title || source.source || source}
                 </span>
               ))}
+              {message.research?.attempted && (
+                <span className="rounded-full border border-black/10 bg-white px-2 py-1">
+                  researched {message.research.scraped || 0} pages
+                </span>
+              )}
             </div>
             {message.content !== "No sufficient local data found" && (
               <div className="flex gap-2">
