@@ -14,8 +14,8 @@ function buildDirectAnswer(query, analysis, relevantFacts) {
       .filter((fact) => (fact.overlap || 0) >= minimumOverlap)
       .slice(0, 2);
 
-    const facts = focusedFacts.length ? focusedFacts : relevantFacts.slice(0, 1);
-    return facts
+    if (!focusedFacts.length) return "No sufficient local data found";
+    return focusedFacts
       .map((fact) => fact.text)
       .join(" ");
   }
@@ -122,19 +122,20 @@ export class ChatEngine {
     ];
     const analysis = analyzeSources(results);
     const bestFacts = relevantFacts.slice(0, 3);
-    const confidence = confidenceFrom(results, analysis, relevantFacts);
     const directAnswer = adjustForLevel(buildDirectAnswer(query, analysis, relevantFacts), profile.level);
-    const topChunks = bestFacts.map((fact) => ({
+    const hasAnswer = directAnswer !== "No sufficient local data found";
+    const confidence = hasAnswer ? confidenceFrom(results, analysis, relevantFacts) : 0;
+    const topChunks = hasAnswer ? bestFacts.map((fact) => ({
       text: fact.text,
       source: fact.source,
       topic: fact.topic,
       score: Number((fact.score || 0).toFixed(4))
-    }));
+    })) : [];
 
     const response = {
       answer: directAnswer,
       confidence,
-      sources: citationSources(bestFacts),
+      sources: hasAnswer ? citationSources(bestFacts) : [],
       chunks: topChunks,
       contradictions: analysis.contradictions,
       "Direct Answer": directAnswer,
@@ -143,7 +144,7 @@ export class ChatEngine {
       "Suggestions": buildSuggestions(results, query),
       metadata: {
         confidence,
-        citations: citationSources(bestFacts),
+        citations: hasAnswer ? citationSources(bestFacts) : [],
         chunks: topChunks,
         learnedFactCount: this.knowledgeBase.facts.length,
         matchedSources: results.map((result) => ({
@@ -152,8 +153,7 @@ export class ChatEngine {
           score: result.score,
           matchedTokens: result.matchedTokens
         })),
-        contradictions: analysis.contradictions,
-        knowledgeBase: this.knowledgeBase.toJSON()
+        contradictions: analysis.contradictions
       }
     };
 

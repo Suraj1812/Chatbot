@@ -12,16 +12,27 @@ function decodeHtml(value) {
     .replace(/&quot;/gi, '"')
     .replace(/&#39;|&apos;/gi, "'")
     .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">");
+    .replace(/&gt;/gi, ">")
+    .replace(/&#x([0-9a-f]+);/gi, (_, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, decimal) => String.fromCodePoint(Number.parseInt(decimal, 10)));
+}
+
+function removeBoilerplateHtml(html) {
+  return String(html || "")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
+    .replace(/<svg[\s\S]*?<\/svg>/gi, " ")
+    .replace(/<nav[\s\S]*?<\/nav>/gi, " ")
+    .replace(/<footer[\s\S]*?<\/footer>/gi, " ")
+    .replace(/<aside[\s\S]*?<\/aside>/gi, " ")
+    .replace(/<form[\s\S]*?<\/form>/gi, " ")
+    .replace(/<[^>]+(class|id)=["'][^"']*(advert|ad-|cookie|newsletter|subscribe|promo|sidebar)[^"']*["'][^>]*>[\s\S]*?<\/[^>]+>/gi, " ");
 }
 
 function stripHtml(html) {
   return decodeHtml(
-    String(html || "")
-      .replace(/<script[\s\S]*?<\/script>/gi, " ")
-      .replace(/<style[\s\S]*?<\/style>/gi, " ")
-      .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
-      .replace(/<svg[\s\S]*?<\/svg>/gi, " ")
+    removeBoilerplateHtml(html)
       .replace(/<!--[\s\S]*?-->/g, " ")
       .replace(/<\/(p|div|section|article|main|li|h[1-6]|br)>/gi, ". ")
       .replace(/<[^>]+>/g, " ")
@@ -42,9 +53,10 @@ function getTitle(html, fallback) {
 }
 
 function extractReadableHtml(html) {
-  const article = String(html || "").match(/<article[^>]*>([\s\S]*?)<\/article>/i)?.[1];
-  const main = String(html || "").match(/<main[^>]*>([\s\S]*?)<\/main>/i)?.[1];
-  return article || main || html;
+  const cleaned = removeBoilerplateHtml(html);
+  const article = cleaned.match(/<article[^>]*>([\s\S]*?)<\/article>/i)?.[1];
+  const main = cleaned.match(/<main[^>]*>([\s\S]*?)<\/main>/i)?.[1];
+  return article || main || cleaned;
 }
 
 function normalizeUrl(rawUrl, baseUrl) {

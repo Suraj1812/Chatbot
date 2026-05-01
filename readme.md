@@ -22,7 +22,16 @@ http://localhost:3000
 - Turn on `Follow links` to collect a small same-site crawl.
 - Click `Save` to store it locally.
 - Saved data is kept in `data/local-scraped-data.json`.
-- The web app ignores bundled sample sources so real local data drives answers.
+- If there is no local data, answers return `No sufficient local data found`.
+
+## API
+
+```text
+POST /ask
+POST /scrape
+POST /learn
+GET  /health
+```
 
 ## Data
 
@@ -53,4 +62,7 @@ src/cleaner.js         Data cleaner
 src/relevanceEngine.js Search ranking
 src/knowledgeBase.js   Memory
 src/scraper.js         Local URL scraper
+data/local-scraped-data.json
+data/knowledge-memory.json
+data/query-history.json
 ```

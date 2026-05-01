@@ -18,6 +18,8 @@ const STOP_WORDS = new Set([
   "into",
   "is",
   "it",
+  "match",
+  "no",
   "of",
   "on",
   "or",
