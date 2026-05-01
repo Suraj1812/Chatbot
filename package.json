@@ -1,0 +1,21 @@
+{
+  "name": "local-knowledge-chatbot",
+  "version": "1.0.0",
+  "description": "Offline scraper-data knowledge engine chatbot with local search, cleaning, analysis, CLI, and UI.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "cli": "node src/cli.js",
+    "demo": "node examples/demo.js",
+    "test": "node test/smoke.test.js"
+  },
+  "keywords": [
+    "offline",
+    "scraper",
+    "chatbot",
+    "knowledge-base"
+  ],
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Local Knowledge Engines",
+    "content": "Home | Products | Subscribe now. A local knowledge engine answers questions using data stored on the user's machine. It can clean scraped pages, remove navigation text, index useful facts, and reuse summaries. Advertisement: buy traffic today. The strongest offline systems combine keyword search with semantic-like matching and clear source ranking.",
+    "source": "sample/local-knowledge-engines"
+  },
+  {
+    "title": "Scraped Data Cleaning",
+    "content": "Navigation: About Contact Login. Data cleaning removes ads, repeated boilerplate, duplicated sentences, and unrelated paragraphs. Meaningful sentences usually contain concrete facts, definitions, comparisons, dates, entities, or cause-and-effect explanations. Data cleaning removes ads, repeated boilerplate, duplicated sentences, and unrelated paragraphs.",
+    "source": "sample/data-cleaning"
+  },
+  {
+    "title": "Choosing a Chatbot Architecture",
+    "content": "For a beginner project, choose a modular Node.js system with a CLI before adding a web UI. Advanced teams may add persistence, worker queues, and vector search later. Offline chatbots should avoid external APIs when privacy, cost control, or disconnected use matters.",
+    "source": "sample/chatbot-architecture"
+  }
+]
