@@ -4,3 +4,4 @@ export { KnowledgeBase } from "./knowledgeBase.js";
 export { analyzeSources, detectContradictions } from "./multiSourceAnalyzer.js";
 export { RelevanceEngine } from "./relevanceEngine.js";
 export { SearchIndex } from "./searchIndex.js";
+export { scrapeHtml, scrapeUrl, scrapeUrls } from "./scraper.js";

@@ -233,6 +233,38 @@
         border-top: 1px solid var(--line);
       }
 
+      .scrape-bar {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 8px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .scrape-bar input {
+        min-width: 0;
+        height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 0 10px;
+        font: inherit;
+      }
+
+      .scrape-bar label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .scrape-bar input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+      }
+
       #data-input {
         min-height: 420px;
         border: 0;
@@ -272,6 +304,10 @@
 
         .composer-wrap {
           padding-inline: 12px;
+        }
+
+        .scrape-bar {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -315,6 +351,11 @@
         <strong>Data</strong>
         <button class="ghost" id="close-data" type="button">Close</button>
       </div>
+      <div class="scrape-bar">
+        <input id="scrape-url" placeholder="https://example.com/page" />
+        <label><input id="scrape-deep" type="checkbox" /> Follow links</label>
+        <button id="scrape-data" type="button">Scrape</button>
+      </div>
       <textarea id="data-input" spellcheck="false"></textarea>
       <div class="data-actions">
         <button id="reset-data" type="button">Reset</button>
@@ -332,6 +373,8 @@
       const dataDialog = document.querySelector("#data-dialog");
       const dataInput = document.querySelector("#data-input");
       const levelInput = document.querySelector("#level");
+      const scrapeUrlInput = document.querySelector("#scrape-url");
+      const scrapeDeepInput = document.querySelector("#scrape-deep");
 
       let sourceTotal = 0;
 
@@ -435,6 +478,29 @@
           refreshEmptyState();
           dataDialog.close();
           setStatus("Saved.", false);
+        } catch (error) {
+          setStatus(error.message);
+        }
+      });
+
+      document.querySelector("#scrape-data").addEventListener("click", async () => {
+        const urls = scrapeUrlInput.value.trim();
+        if (!urls) return;
+        setStatus("Scraping...", false);
+        try {
+          const payload = await requestJson("/api/scrape", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              urls,
+              depth: scrapeDeepInput.checked,
+              maxPages: scrapeDeepInput.checked ? 10 : 5
+            })
+          });
+          await loadData();
+          scrapeUrlInput.value = "";
+          const warning = payload.errors?.length ? ` ${payload.errors.length} skipped.` : "";
+          setStatus(`Added ${payload.added}.${warning}`, false);
         } catch (error) {
           setStatus(error.message);
         }

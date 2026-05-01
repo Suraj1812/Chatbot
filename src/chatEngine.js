@@ -7,8 +7,15 @@ import { tokenize } from "./tokenizer.js";
 
 function buildDirectAnswer(query, analysis, relevantFacts) {
   if (relevantFacts.length > 0) {
-    return relevantFacts
-      .slice(0, 2)
+    const bestScore = relevantFacts[0].score || 0;
+    const minimumOverlap = Math.min(2, Math.max(tokenize(query).length - 1, 1));
+    const focusedFacts = relevantFacts
+      .filter((fact) => fact.score >= Math.max(1, bestScore * 0.58))
+      .filter((fact) => (fact.overlap || 0) >= minimumOverlap)
+      .slice(0, 2);
+
+    const facts = focusedFacts.length ? focusedFacts : relevantFacts.slice(0, 1);
+    return facts
       .map((fact) => fact.text)
       .join(" ");
   }
@@ -33,16 +40,31 @@ function factsFromRankedSentences(query, results) {
         for (const term of queryTerms) {
           if (sentenceTerms.has(term)) overlap += 1;
         }
+        const density = overlap / Math.max(sentenceTerms.size, 1);
         return {
           text: sentence,
           source: result.item.source,
           topic: result.item.title,
-          score: overlap * 10 + result.score
+          overlap,
+          score: overlap * 10 + density * 8 + result.score
         };
       });
     })
     .filter((fact) => fact.score > 0)
-    .sort((left, right) => right.score - left.score);
+    .sort((left, right) => right.overlap - left.overlap || right.score - left.score);
+}
+
+function confidenceFrom(results, analysis) {
+  if (results.length === 0) return "low";
+  const top = results[0].score;
+  const second = results[1]?.score || 0;
+  const spread = top - second;
+  const sourceBonus = Math.min(analysis.sourceCount, 3) * 0.15;
+  const conflictPenalty = analysis.contradictions.length ? 0.5 : 0;
+  const confidence = top * 0.16 + spread * 0.08 + sourceBonus - conflictPenalty;
+  if (confidence >= 0.9) return "high";
+  if (confidence >= 0.45) return "medium";
+  return "low";
 }
 
 function buildExplanation(results, analysis) {
@@ -102,6 +124,7 @@ export class ChatEngine {
       "Contextual Advice": formatAdvice(profile, analysis.contradictions.length > 0),
       "Suggestions": buildSuggestions(results, query),
       metadata: {
+        confidence: confidenceFrom(results, analysis),
         matchedSources: results.map((result) => ({
           title: result.item.title,
           source: result.item.source,

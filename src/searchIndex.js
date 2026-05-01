@@ -5,6 +5,7 @@ export class SearchIndex {
     this.items = [];
     this.invertedIndex = new Map();
     this.documentFrequency = new Map();
+    this.averageDocumentLength = 0;
     this.addMany(items);
   }
 
@@ -26,7 +27,8 @@ export class SearchIndex {
     const indexed = {
       ...item,
       tokens,
-      tokenCounts
+      tokenCounts,
+      length: tokens.length
     };
 
     this.items.push(indexed);
@@ -36,6 +38,9 @@ export class SearchIndex {
       this.invertedIndex.get(token).add(indexed.id);
       this.documentFrequency.set(token, (this.documentFrequency.get(token) || 0) + 1);
     }
+
+    const totalLength = this.items.reduce((sum, current) => sum + current.length, 0);
+    this.averageDocumentLength = totalLength / Math.max(this.items.length, 1);
   }
 
   search(query) {
@@ -61,5 +66,18 @@ export class SearchIndex {
     const documents = Math.max(this.items.length, 1);
     const frequency = this.documentFrequency.get(token) || 0;
     return Math.log((documents + 1) / (frequency + 1)) + 1;
+  }
+
+  bm25(token, item) {
+    const frequency = item.tokenCounts.get(token) || 0;
+    if (!frequency) return 0;
+
+    const k1 = 1.4;
+    const b = 0.72;
+    const length = Math.max(item.length || 1, 1);
+    const averageLength = Math.max(this.averageDocumentLength || 1, 1);
+    const numerator = frequency * (k1 + 1);
+    const denominator = frequency + k1 * (1 - b + b * (length / averageLength));
+    return this.idf(token) * (numerator / denominator);
   }
 }

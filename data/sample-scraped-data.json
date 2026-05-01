@@ -13,5 +13,10 @@
     "title": "Choosing a Chatbot Architecture",
     "content": "For a beginner project, choose a modular Node.js system with a CLI before adding a web UI. Advanced teams may add persistence, worker queues, and vector search later. Offline chatbots should avoid external APIs when privacy, cost control, or disconnected use matters.",
     "source": "sample/chatbot-architecture"
+  },
+  {
+    "title": "Local URL Scraping",
+    "content": "A production local scraper should fetch HTML directly, remove scripts and styles, extract readable article or main content, keep the page title, and store the source URL. Same-site crawling can add related pages, but it should use page limits and timeouts. Better scraping improves answer accuracy because the knowledge engine has cleaner facts, better source labels, and more relevant sentences to rank.",
+    "source": "sample/local-url-scraping"
   }
 ]

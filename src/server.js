@@ -1,8 +1,10 @@
 import fs from "node:fs";
 import http from "node:http";
+import net from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createChatEngine } from "./index.js";
+import { scrapeUrls } from "./scraper.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -21,6 +23,20 @@ function loadLocalData() {
 function saveLocalData(data) {
   fs.mkdirSync(dataDir, { recursive: true });
   fs.writeFileSync(localDataPath, `${JSON.stringify(data, null, 2)}\n`);
+}
+
+function mergeScrapedData(existing, incoming) {
+  const merged = [...existing];
+  const seen = new Set(existing.map((item) => `${item.source}::${item.title}`.toLowerCase()));
+
+  for (const item of incoming) {
+    const key = `${item.source}::${item.title}`.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push(item);
+  }
+
+  return merged;
 }
 
 function validateScrapedData(data) {
@@ -93,6 +109,36 @@ const server = http.createServer(async (request, response) => {
       return;
     }
 
+    if (request.method === "POST" && request.url === "/api/scrape") {
+      const payload = JSON.parse(await readBody(request));
+      const urls = Array.isArray(payload.urls)
+        ? payload.urls
+        : String(payload.urls || "")
+            .split(/\n|,/)
+            .map((url) => url.trim())
+            .filter(Boolean);
+
+      if (urls.length === 0) {
+        sendJson(response, 400, { error: "Add at least one URL." });
+        return;
+      }
+
+      const result = await scrapeUrls(urls, {
+        depth: payload.depth ? 1 : 0,
+        maxPages: payload.maxPages || 10
+      });
+      scrapedData = mergeScrapedData(scrapedData, result.scraped);
+      saveLocalData(scrapedData);
+      engine = createChatEngine(scrapedData);
+      sendJson(response, 200, {
+        ok: true,
+        added: result.scraped.length,
+        count: scrapedData.length,
+        errors: result.errors
+      });
+      return;
+    }
+
     if (request.method === "POST" && request.url === "/api/reset") {
       scrapedData = sampleData;
       saveLocalData(scrapedData);
@@ -121,28 +167,35 @@ const server = http.createServer(async (request, response) => {
 const preferredPort = Number(process.env.PORT || 3000);
 const maxPortAttempts = 20;
 
-function listen(port, attemptsLeft = maxPortAttempts) {
-  server.once("error", (error) => {
-    if (error.code === "EADDRINUSE" && attemptsLeft > 0 && !process.env.PORT) {
-      listen(port + 1, attemptsLeft - 1);
-      return;
-    }
-
-    if (error.code === "EADDRINUSE") {
-      console.error(`Port ${port} is already in use. Stop the other app or run with PORT=${port + 1} npm start.`);
-      process.exit(1);
-    }
-
-    console.error(error.message);
-    process.exit(1);
-  });
-
-  server.listen(port, () => {
-    console.log(`Local chatbot running at http://localhost:${port}`);
+function canUsePort(port) {
+  return new Promise((resolve) => {
+    const probe = net.createServer();
+    probe.once("error", () => resolve(false));
+    probe.once("listening", () => {
+      probe.close(() => resolve(true));
+    });
+    probe.listen(port);
   });
 }
 
-listen(preferredPort);
+async function findPort(startPort) {
+  const attempts = process.env.PORT ? 1 : maxPortAttempts + 1;
+  for (let index = 0; index < attempts; index += 1) {
+    const port = startPort + index;
+    if (await canUsePort(port)) return port;
+  }
+  return 0;
+}
+
+const port = await findPort(preferredPort);
+if (!port) {
+  console.error(`No open port found from ${preferredPort} to ${preferredPort + maxPortAttempts}.`);
+  process.exit(1);
+}
+
+server.listen(port, () => {
+  console.log(`Local chatbot running at http://localhost:${port}`);
+});
 
 process.on("SIGINT", () => {
   server.close(() => process.exit(0));

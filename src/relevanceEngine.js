@@ -30,11 +30,12 @@ export class RelevanceEngine {
       .map((item) => {
         let keywordScore = 0;
         for (const token of queryTokens) {
-          keywordScore += (item.tokenCounts.get(token) || 0) * this.index.idf(token);
+          keywordScore += this.index.bm25(token, item);
         }
 
         const semanticScore = jaccardSimilarity(queryTokens, item.tokens);
-        const score = keywordScore * 0.55 + semanticScore * 1.1 + phraseScore(query, item);
+        const titleBoost = jaccardSimilarity(queryTokens, tokenize(item.title).map(stemToken)) * 1.6;
+        const score = keywordScore * 0.9 + semanticScore * 1.1 + titleBoost + phraseScore(query, item);
 
         return {
           item,
