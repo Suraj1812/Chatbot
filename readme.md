@@ -80,5 +80,17 @@ http://localhost:4000
 
 - Scraped and learned data persists in `backend/data/db.json`.
 - Answers are extractive and source-backed.
-- If local data is missing or irrelevant, the answer is exactly `No sufficient local data found` with confidence `0`.
+- The backend checks saved local memory first.
+- If local confidence is low, it automatically searches public HTML results, scrapes useful pages, saves them locally, rebuilds the index, and asks again.
+- If nothing sufficient is found after research, the answer is exactly `No sufficient local data found` with confidence `0`.
 - Approved answers are stored and can improve later answers.
+
+## Useful Environment Settings
+
+```bash
+PORT=4000
+DB_PATH=backend/data/db.json
+AUTO_RESEARCH_MAX_PAGES=12
+AUTO_RESEARCH_QUERIES=4
+ALLOW_PRIVATE_SCRAPE=false
+```

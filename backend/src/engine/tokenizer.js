@@ -63,9 +63,9 @@ export function tokenOverlap(left, right) {
 
 export function splitSentences(value) {
   return String(value || "")
-    .replace(/\s+/g, " ")
-    .split(/(?<=[.!?])\s+|\n+/)
-    .map((sentence) => sentence.trim())
+    .replace(/\r/g, "\n")
+    .split(/\n+|(?<=[.!?])\s+/)
+    .map((sentence) => sentence.replace(/\s+/g, " ").trim())
     .filter(Boolean);
 }
 

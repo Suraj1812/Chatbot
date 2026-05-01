@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
 import { BM25Index } from "./bm25.js";
-import { splitChunks, splitSentences, tokenize, tokenOverlap, uniqueTokens } from "./tokenizer.js";
+import { normalizeText, splitChunks, splitSentences, tokenize, tokenOverlap, uniqueTokens } from "./tokenizer.js";
 import { hashText } from "../utils/hash.js";
 import { detectConversationIntent } from "./intentEngine.js";
 
@@ -12,6 +12,21 @@ const ACTION_TOKENS = new Set([
   "explain", "find", "get", "list", "make", "mean", "meaning", "need", "overview",
   "question", "search", "should", "summary", "tell", "want"
 ]);
+
+const BROAD_TOKENS = new Set([
+  "answer", "content", "data", "document", "engine", "fact", "guide", "knowledge",
+  "local", "memory", "note", "page", "result", "search", "source", "store", "stored",
+  "system", "thing", "tool", "use", "user"
+]);
+
+const HONORIFIC_TOKENS = new Set(["maa", "ma", "mata", "shri", "sri", "lord"]);
+const SUBJECT_MODIFIER_TOKENS = new Set([
+  "article", "biography", "course", "engine", "family", "father", "guide", "history",
+  "mother", "page", "profile", "son", "story", "tutorial", "wife"
+]);
+const DEFINITION_PATTERNS = /\b(is|are|was|were|refers to|means|known as|known for|called|serves as|leader|politician|goddess|god|deity|river|city|district|state|person|founder|actor|singer|writer|minister|president|prime minister)\b/i;
+const OVERVIEW_BAD_PATTERNS = /\b(address|explore|parking|near|visit near|places to visit|best time to visit|religious places|temples?|mandir|gurudwara|faq|question|answer)\b/i;
+const OVERVIEW_GOOD_PATTERNS = /\b(is|are|city|district|state|located|known for|famous for|population|part of|region|area|capital|founded|established)\b/i;
 
 function isFactLike(sentence) {
   return /\b(is|are|means|contains|requires|should|can|may|because|when|if|has|have|provides|stores|uses|supports)\b/i.test(sentence) ||
@@ -43,12 +58,60 @@ function questionKind(query) {
   if (/^(what is|what are|who is|who are|define|tell me about)\b/.test(normalized)) return "definition";
   if (/^(how|how do|how does|how to)\b/.test(normalized)) return "how";
   if (/^(why)\b/.test(normalized)) return "why";
+  if (uniqueTokens(normalized).length <= 2) return "overview";
   return "general";
 }
 
 function queryCoreTokens(query) {
   const tokens = uniqueTokens(query).filter((token) => !ACTION_TOKENS.has(token));
   return tokens.length ? tokens : uniqueTokens(query);
+}
+
+function queryProfile(query) {
+  const kind = questionKind(query);
+  const coreTokens = queryCoreTokens(query);
+  const specificTokens = coreTokens.filter((token) => !BROAD_TOKENS.has(token) && !HONORIFIC_TOKENS.has(token));
+  const normalized = query.trim().toLowerCase();
+  const isIdentityQuestion = /^(who is|who are|what is|what are|define|tell me about)\b/.test(normalized);
+  const entityStrict = specificTokens.length >= 1 && (
+    isIdentityQuestion ||
+    kind === "overview"
+  );
+  return { kind, coreTokens, specificTokens, entityStrict };
+}
+
+function firstTokenPosition(tokens, textTokens) {
+  const positions = tokens
+    .map((token) => textTokens.indexOf(token))
+    .filter((index) => index >= 0);
+  return positions.length ? Math.min(...positions) : Infinity;
+}
+
+function entityAppearsEarly(result, specificTokens) {
+  if (!specificTokens.length) return true;
+  const textTokens = result.textTokens || uniqueTokens(result.text);
+  const allInText = specificTokens.every((token) => textTokens.includes(token));
+  return allInText && firstTokenPosition(specificTokens, textTokens) <= 2;
+}
+
+function directIdentityFocus(result, specificTokens) {
+  if (!specificTokens.length) return true;
+  const textTokens = result.textTokens || uniqueTokens(result.text);
+  if (!specificTokens.every((token) => textTokens.includes(token))) return false;
+  const rawTokens = normalizeText(result.text).split(/\s+/).filter(Boolean);
+  const positions = specificTokens.map((token) => rawTokens.findIndex((candidate) => candidate === token));
+  if (positions.some((position) => position < 0)) return false;
+
+  if (specificTokens.length === 1) {
+    const position = positions[0];
+    const nextToken = textTokens[textTokens.indexOf(specificTokens[0]) + 1];
+    return position === 0 && !SUBJECT_MODIFIER_TOKENS.has(nextToken);
+  }
+
+  const first = Math.min(...positions);
+  const last = Math.max(...positions);
+  const earlyWindow = rawTokens.slice(0, Math.min(rawTokens.length, last + 8)).join(" ");
+  return first <= 1 && last <= 6 && /\b(is|are|was|were|means|refers|known|called|serves|leader|politician|goddess|god|city|capital)\b/i.test(earlyWindow);
 }
 
 function hostFromSource(source) {
@@ -87,7 +150,9 @@ function sentenceQuality(text, kind, coreTokens = []) {
   if (words.length >= 8 && words.length <= 45) score += 0.8;
   if (words.length > 70) score -= 0.5;
   if (words.length < 5) score -= 1;
-  if (/\?$/.test(value)) score -= 1.2;
+  if (/^\[?\d+]|^["'“”]/.test(value)) score -= 4;
+  if ((value.match(/\b\d+(?:\.\d+)?\s+[A-Z]/g) || []).length >= 2) score -= 6;
+  if (/\?$/.test(value)) score -= 5;
   if (/\b(click|subscribe|sign up|cookie|advertisement|buy now|all rights reserved|privacy policy|terms of use)\b/i.test(value)) score -= 1.2;
   if (/\b(npm|brew|install|download|pricing|plans?|bundled|month|competitors?|advantages?)\b|\$\d/i.test(value)) score -= 0.8;
   if (/^(npm|brew|pip|pnpm|yarn|curl)\b/i.test(value)) score -= 3;
@@ -98,9 +163,16 @@ function sentenceQuality(text, kind, coreTokens = []) {
   if (directOverlap >= 0.5) score += 0.9;
 
   if (kind === "definition") {
-    if (/\b(is|are|refers to|means|is a|is an)\b/i.test(value)) score += 1.2;
+    if (DEFINITION_PATTERNS.test(value)) score += 1.2;
     if (/\b(ai|artificial intelligence|agent|assistant|developer|software|system|tool|platform|service|model|application)\b/i.test(value)) score += 0.8;
     if (/^(what|how|why|when|where)\b/i.test(value)) score -= 1;
+    if (words.length > 65) score -= 2.5;
+  }
+
+  if (kind === "overview") {
+    if (OVERVIEW_GOOD_PATTERNS.test(value)) score += 0.9;
+    if (OVERVIEW_BAD_PATTERNS.test(value)) score -= 1.8;
+    if (!OVERVIEW_GOOD_PATTERNS.test(value)) score -= 0.8;
   }
 
   if (kind === "how" && /\b(step|use|start|create|install|run|configure|works|process)\b/i.test(value)) score += 0.8;
@@ -123,6 +195,51 @@ function dedupeByMeaning(results) {
     seen.add(key);
     return true;
   });
+}
+
+function buildCandidateResponse(query, results) {
+  const queryTokens = uniqueTokens(query, { expand: true });
+  const { kind, coreTokens, specificTokens, entityStrict } = queryProfile(query);
+  const scored = dedupeByMeaning(results
+    .map((result) => ({
+      ...result,
+      overlap: result.matchedTokens.length / Math.max(queryTokens.length, 1),
+      textOverlap: tokenOverlap(coreTokens, result.textTokens || uniqueTokens(result.text)),
+      titleOverlap: tokenOverlap(coreTokens, result.titleTokens || uniqueTokens(result.title || "")),
+      specificTextOverlap: tokenOverlap(specificTokens, result.textTokens || uniqueTokens(result.text)),
+      specificTitleOverlap: tokenOverlap(specificTokens, result.titleTokens || uniqueTokens(result.title || "")),
+      quality: sentenceQuality(result.text, kind, coreTokens),
+      answerScore: result.score +
+        sentenceQuality(result.text, kind, coreTokens) +
+        sourceQuality(result, coreTokens) +
+        tokenOverlap(specificTokens, result.textTokens || uniqueTokens(result.text)) * 1.5
+    }))
+    .filter((result) => {
+      const minimumOverlap = Math.min(0.5, 2 / Math.max(queryTokens.length, 1));
+      const hasQuestionTermInText = result.textOverlap >= Math.min(0.5, 1 / Math.max(coreTokens.length, 1));
+      const hasStrongTitleMatch = result.titleOverlap >= 0.7 && result.quality > 0.2;
+      const requiredSpecificCoverage = entityStrict ? 1 : Math.min(0.5, 1 / Math.max(specificTokens.length, 1));
+      const hasSpecificTerm = !specificTokens.length || result.specificTextOverlap >= requiredSpecificCoverage;
+      const hasEntityFocus = !entityStrict || entityAppearsEarly(result, specificTokens);
+      const needsDefinitionShape = kind === "definition" || (kind === "overview" && entityStrict);
+      const hasDefinitionShape = !needsDefinitionShape || DEFINITION_PATTERNS.test(result.text) || OVERVIEW_GOOD_PATTERNS.test(result.text);
+      const hasDirectIdentityFocus = kind !== "definition" || directIdentityFocus(result, specificTokens);
+      const qualityFloor = kind === "overview" ? 0.35 : -0.2;
+      return result.overlap >= minimumOverlap &&
+        hasSpecificTerm &&
+        hasEntityFocus &&
+        hasDefinitionShape &&
+        hasDirectIdentityFocus &&
+        result.quality > qualityFloor &&
+        (hasQuestionTermInText || hasStrongTitleMatch);
+    })
+    .sort((left, right) => right.answerScore - left.answerScore))
+    .slice(0, 5);
+
+  const approved = scored.find((result) => result.type === "approved-answer");
+  const candidates = approved && approved.overlap >= 0.5 ? [approved] : scored.slice(0, kind === "definition" ? 2 : 4);
+  const answer = candidates.map((result) => normalizeAnswerText(result.text)).join("\n\n");
+  return { answer, candidates };
 }
 
 export class KnowledgeEngine {
@@ -186,10 +303,17 @@ export class KnowledgeEngine {
     return answer?.intent === "conversation" || (answer?.answer !== NO_DATA_ANSWER && answer?.confidence >= ANSWER_THRESHOLD);
   }
 
+  canAutoResearch(query) {
+    return !/\b(who am i|who is me|who i am|my name|about me|do you know me)\b/i.test(query);
+  }
+
   upsertDocument(input) {
     const now = new Date().toISOString();
     const hash = input.hash || hashText(`${input.title}\n${input.content}`);
-    const bySource = this.db.data.documents.findIndex((document) => document.source === input.source);
+    const shouldDedupeBySource = input.source && !String(input.source).startsWith("manual");
+    const bySource = shouldDedupeBySource
+      ? this.db.data.documents.findIndex((document) => document.source === input.source)
+      : -1;
     const byHash = this.db.data.documents.findIndex((document) => document.hash === hash);
     const index = bySource >= 0 ? bySource : byHash;
 
@@ -239,7 +363,7 @@ export class KnowledgeEngine {
     const document = this.upsertDocument({
       title,
       content: text,
-      source,
+      source: source === "manual" ? `manual:${hashText(`${title}\n${text}`).slice(0, 16)}` : source,
       type: "learned"
     });
     await this.persist();
@@ -281,38 +405,7 @@ export class KnowledgeEngine {
   }
 
   buildAnswer(query, results) {
-    const queryTokens = uniqueTokens(query, { expand: true });
-    const coreTokens = queryCoreTokens(query);
-    const kind = questionKind(query);
-    const candidates = dedupeByMeaning(results
-      .map((result) => ({
-        ...result,
-        overlap: result.matchedTokens.length / Math.max(queryTokens.length, 1),
-        textOverlap: tokenOverlap(coreTokens, result.textTokens || uniqueTokens(result.text)),
-        titleOverlap: tokenOverlap(coreTokens, result.titleTokens || uniqueTokens(result.title || "")),
-        answerScore: result.score +
-          sentenceQuality(result.text, kind, coreTokens) +
-          sourceQuality(result, coreTokens)
-      }))
-      .filter((result) => {
-        const minimumOverlap = Math.min(0.5, 2 / Math.max(queryTokens.length, 1));
-        const hasQuestionTermInText = result.textOverlap >= Math.min(0.5, 1 / Math.max(coreTokens.length, 1));
-        const hasStrongTitleMatch = result.titleOverlap >= 0.7 && sentenceQuality(result.text, kind, coreTokens) > 0.2;
-        return result.overlap >= minimumOverlap && (hasQuestionTermInText || hasStrongTitleMatch);
-      })
-      .filter((result) => sentenceQuality(result.text, kind, coreTokens) > -0.35)
-      .sort((left, right) => right.answerScore - left.answerScore))
-      .slice(0, 5);
-
-    if (!candidates.length) return "";
-
-    const approved = candidates.find((result) => result.type === "approved-answer");
-    if (approved && approved.overlap >= 0.5) return approved.text;
-
-    return candidates
-      .slice(0, kind === "definition" ? 2 : 4)
-      .map((result) => normalizeAnswerText(result.text))
-      .join("\n\n");
+    return buildCandidateResponse(query, results).answer;
   }
 
   confidence(results, contradictions, answer) {
@@ -326,7 +419,8 @@ export class KnowledgeEngine {
       Math.min(Math.max(top - second, 0) / 10, 0.12) +
       Math.min(sourceCount, 4) * 0.08 +
       Math.min(supported, 3) * 0.06 -
-      contradictions.length * 0.18;
+      contradictions.length * 0.18 +
+      (supported > 0 ? 0.08 : 0);
     return Number(Math.max(0, Math.min(1, raw)).toFixed(2));
   }
 
@@ -345,15 +439,13 @@ export class KnowledgeEngine {
       return intentResponse;
     }
 
-    const results = this.index.search(query, 10);
-    const answer = this.buildAnswer(query, results);
-    const contradictions = this.detectContradictions(results.slice(0, 6));
-    const confidence = this.confidence(results, contradictions, answer);
-    const normalizedAnswer = normalizeAnswerText(answer);
-    const answerBackedResults = results.filter((result) => normalizedAnswer.includes(normalizeAnswerText(result.text).slice(0, 80)));
-    const sourceResults = answerBackedResults.length ? answerBackedResults : results;
+    const results = this.index.search(query, 60);
+    const { answer, candidates } = buildCandidateResponse(query, results);
+    const contradictions = this.detectContradictions(candidates.slice(0, 6));
+    const confidence = this.confidence(candidates, contradictions, answer);
+    const sourceResults = candidates;
 
-    const response = answer
+    const response = answer && confidence >= 0.35
       ? {
           answer,
           confidence,
@@ -408,6 +500,10 @@ export class KnowledgeEngine {
       };
       if (existing >= 0) this.db.data.approvedAnswers[existing] = { ...this.db.data.approvedAnswers[existing], ...approved };
       else this.db.data.approvedAnswers.push(approved);
+    } else if (rating === "bad") {
+      this.db.data.approvedAnswers = this.db.data.approvedAnswers.filter((entry) => {
+        return entry.hash !== hashText(`${query}:${answer}`) && entry.answer !== answer;
+      });
     }
 
     await this.persist();

@@ -47,7 +47,7 @@ export function createApiRouter({ engine, scrapeState }) {
   router.post("/ask", async (request, response) => {
     const input = askSchema.parse(request.body);
     const localAnswer = await engine.ask(input.query);
-    if (!input.autoResearch || engine.isAnswerSufficient(localAnswer)) {
+    if (!input.autoResearch || engine.isAnswerSufficient(localAnswer) || !engine.canAutoResearch(input.query)) {
       response.json(localAnswer);
       return;
     }

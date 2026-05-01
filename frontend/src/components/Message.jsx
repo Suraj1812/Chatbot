@@ -21,7 +21,8 @@ export function Message({ message, onFeedback }) {
   const [sentRating, setSentRating] = useState("");
   const isUser = message.role === "user";
   const confidence = Math.round((message.confidence || 0) * 100);
-  const canRate = !isUser && message.content !== "No sufficient local data found" && !sentRating;
+  const isConversation = message.intent === "conversation";
+  const canRate = !isUser && !isConversation && message.content !== "No sufficient local data found" && !sentRating;
 
   async function rate(rating) {
     if (!canRate) return;
@@ -40,7 +41,7 @@ export function Message({ message, onFeedback }) {
           <ReactMarkdown>{message.content}</ReactMarkdown>
         </div>
 
-        {!isUser && (
+        {!isUser && !isConversation && (
           <div className="mt-3 space-y-2">
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
               <span className="rounded-full border border-black/10 bg-white px-2 py-1">confidence {confidence}%</span>

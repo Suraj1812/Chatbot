@@ -40,7 +40,8 @@ export const useChatStore = create((set, get) => ({
         confidence: data.confidence,
         sources: data.sources || [],
         chunks: data.chunks || [],
-        research: data.research
+        research: data.research,
+        intent: data.intent
       };
       set((state) => ({ messages: [...state.messages, assistantMessage], loading: false, loadingLabel: "" }));
       await get().refreshHealth();
