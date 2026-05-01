@@ -22,6 +22,7 @@ http://localhost:3000
 - Turn on `Follow links` to collect a small same-site crawl.
 - Click `Save` to store it locally.
 - Saved data is kept in `data/local-scraped-data.json`.
+- The web app ignores bundled sample sources so real local data drives answers.
 
 ## Data
 
@@ -39,7 +40,6 @@ http://localhost:3000
 
 ```bash
 npm test
-npm run demo
 npm run cli -- "What is a local knowledge engine?"
 ```
 
@@ -53,5 +53,4 @@ src/cleaner.js         Data cleaner
 src/relevanceEngine.js Search ranking
 src/knowledgeBase.js   Memory
 src/scraper.js         Local URL scraper
-data/sample-scraped-data.json
 ```

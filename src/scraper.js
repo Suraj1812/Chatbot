@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { splitSentences } from "./tokenizer.js";
 
 const DEFAULT_TIMEOUT_MS = 10000;
@@ -133,7 +134,10 @@ export function scrapeHtml(html, source = "local-html") {
   return {
     title,
     content,
-    source
+    source,
+    scrapedAt: new Date().toISOString(),
+    lastUpdated: new Date().toISOString(),
+    contentHash: crypto.createHash("sha256").update(`${title}\n${content}`).digest("hex")
   };
 }
 

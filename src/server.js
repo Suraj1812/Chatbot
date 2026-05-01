@@ -10,29 +10,83 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const publicDir = path.join(root, "public");
 const dataDir = path.join(root, "data");
-const sampleDataPath = path.join(dataDir, "sample-scraped-data.json");
 const localDataPath = path.join(dataDir, "local-scraped-data.json");
-const sampleData = JSON.parse(fs.readFileSync(sampleDataPath, "utf8"));
+const memoryPath = path.join(dataDir, "knowledge-memory.json");
+const historyPath = path.join(dataDir, "query-history.json");
+const maxBodyBytes = 1_000_000;
+const maxUrlsPerScrape = 10;
+const maxPagesPerScrape = 20;
+
+function readJsonFile(filePath, fallback) {
+  if (!fs.existsSync(filePath)) return fallback;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch {
+    return fallback;
+  }
+}
+
+function writeJsonFile(filePath, data) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  const tempPath = `${filePath}.tmp`;
+  fs.writeFileSync(tempPath, `${JSON.stringify(data, null, 2)}\n`);
+  fs.renameSync(tempPath, filePath);
+}
 
 function loadLocalData() {
-  if (!fs.existsSync(localDataPath)) return sampleData;
-  const parsed = JSON.parse(fs.readFileSync(localDataPath, "utf8"));
-  return Array.isArray(parsed) ? parsed : sampleData;
+  const parsed = readJsonFile(localDataPath, []);
+  if (!Array.isArray(parsed)) return [];
+  return parsed.filter((item) => !String(item?.source || "").startsWith("sample/"));
 }
 
 function saveLocalData(data) {
-  fs.mkdirSync(dataDir, { recursive: true });
-  fs.writeFileSync(localDataPath, `${JSON.stringify(data, null, 2)}\n`);
+  writeJsonFile(localDataPath, data);
+}
+
+function loadMemory() {
+  const memory = readJsonFile(memoryPath, { topics: [], facts: [], summaries: [], feedback: [] });
+  const facts = Array.isArray(memory.facts)
+    ? memory.facts.filter((fact) => !String(fact?.source || "").startsWith("sample/"))
+    : [];
+  const summaries = Array.isArray(memory.summaries)
+    ? memory.summaries.filter((summary) => !String(summary?.source || "").startsWith("sample/"))
+    : [];
+
+  return {
+    topics: [...new Set([...facts.map((fact) => fact.topic), ...summaries.map((summary) => summary.topic)].filter(Boolean))],
+    facts,
+    summaries,
+    feedback: Array.isArray(memory.feedback) ? memory.feedback : []
+  };
+}
+
+function saveMemory() {
+  writeJsonFile(memoryPath, engine.knowledgeBase.toJSON());
+}
+
+function loadHistory() {
+  const history = readJsonFile(historyPath, []);
+  return Array.isArray(history) ? history : [];
+}
+
+function saveHistory(history) {
+  writeJsonFile(historyPath, history.slice(-200));
 }
 
 function mergeScrapedData(existing, incoming) {
-  const merged = [...existing];
-  const seen = new Set(existing.map((item) => `${item.source}::${item.title}`.toLowerCase()));
+  const merged = existing.map((item) => ({ ...item }));
+  const indexes = new Map(merged.map((item, index) => [`${item.source}::${item.title}`.toLowerCase(), index]));
 
   for (const item of incoming) {
     const key = `${item.source}::${item.title}`.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
+    if (indexes.has(key)) {
+      const index = indexes.get(key);
+      if (merged[index].contentHash !== item.contentHash || merged[index].content !== item.content) {
+        merged[index] = item;
+      }
+      continue;
+    }
+    indexes.set(key, merged.length);
     merged.push(item);
   }
 
@@ -51,14 +105,25 @@ function validateScrapedData(data) {
 }
 
 let scrapedData = loadLocalData();
-let engine = createChatEngine(scrapedData);
+let queryHistory = loadHistory();
+let engine = createChatEngine(scrapedData, { initialKnowledge: loadMemory() });
+let scrapeInProgress = false;
+
+function rebuildEngine({ learnAll = false } = {}) {
+  const memory = engine.knowledgeBase.toJSON();
+  engine = createChatEngine(scrapedData, { initialKnowledge: memory });
+  if (learnAll) {
+    engine.knowledgeBase.learnFromResults(engine.cleanedData.map((item) => ({ item, score: 1 })));
+    saveMemory();
+  }
+}
 
 function readBody(request) {
   return new Promise((resolve, reject) => {
     let body = "";
     request.on("data", (chunk) => {
       body += chunk;
-      if (body.length > 1_000_000) {
+      if (body.length > maxBodyBytes) {
         request.destroy();
         reject(new Error("Request body too large."));
       }
@@ -68,35 +133,76 @@ function readBody(request) {
   });
 }
 
+async function readJsonRequest(request) {
+  const body = await readBody(request);
+  if (!body.trim()) return {};
+  try {
+    return JSON.parse(body);
+  } catch {
+    const error = new Error("Invalid JSON.");
+    error.statusCode = 400;
+    throw error;
+  }
+}
+
 function sendJson(response, statusCode, payload) {
   response.writeHead(statusCode, { "content-type": "application/json; charset=utf-8" });
   response.end(JSON.stringify(payload, null, 2));
 }
 
+function routePath(request) {
+  return new URL(request.url, "http://localhost").pathname;
+}
+
+function parseUrls(value) {
+  const urls = Array.isArray(value)
+    ? value
+    : String(value || "")
+        .split(/\n|,/)
+        .map((url) => url.trim())
+        .filter(Boolean);
+
+  return [...new Set(urls)].slice(0, maxUrlsPerScrape);
+}
+
+function boundedNumber(value, fallback, min, max) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.min(Math.max(number, min), max);
+}
+
+function isRoute(pathname, routes) {
+  return routes.includes(pathname);
+}
+
 const server = http.createServer(async (request, response) => {
+  const pathname = routePath(request);
+
   try {
-    if (request.method === "GET" && request.url === "/") {
+    if (request.method === "GET" && pathname === "/") {
       response.writeHead(200, { "content-type": "text/html" });
       response.end(fs.readFileSync(path.join(publicDir, "index.html"), "utf8"));
       return;
     }
 
-    if (request.method === "GET" && request.url === "/health") {
+    if (request.method === "GET" && pathname === "/health") {
       sendJson(response, 200, {
         ok: true,
         sources: scrapedData.length,
-        facts: engine.knowledgeBase.facts.length
+        facts: engine.knowledgeBase.facts.length,
+        history: queryHistory.length,
+        scrapeInProgress
       });
       return;
     }
 
-    if (request.method === "GET" && request.url === "/api/data") {
-      sendJson(response, 200, { scrapedData, knowledgeBase: engine.knowledgeBase.toJSON() });
+    if (request.method === "GET" && isRoute(pathname, ["/data", "/api/data"])) {
+      sendJson(response, 200, { scrapedData, knowledgeBase: engine.knowledgeBase.toJSON(), history: queryHistory });
       return;
     }
 
-    if (request.method === "POST" && request.url === "/api/data") {
-      const payload = JSON.parse(await readBody(request));
+    if (request.method === "POST" && isRoute(pathname, ["/data", "/api/data"])) {
+      const payload = await readJsonRequest(request);
       const validationError = validateScrapedData(payload.scraped_data);
       if (validationError) {
         sendJson(response, 400, { error: validationError });
@@ -104,63 +210,108 @@ const server = http.createServer(async (request, response) => {
       }
       scrapedData = payload.scraped_data;
       saveLocalData(scrapedData);
-      engine = createChatEngine(scrapedData);
+      rebuildEngine({ learnAll: true });
       sendJson(response, 200, { ok: true, count: scrapedData.length });
       return;
     }
 
-    if (request.method === "POST" && request.url === "/api/scrape") {
-      const payload = JSON.parse(await readBody(request));
-      const urls = Array.isArray(payload.urls)
-        ? payload.urls
-        : String(payload.urls || "")
-            .split(/\n|,/)
-            .map((url) => url.trim())
-            .filter(Boolean);
+    if (request.method === "POST" && isRoute(pathname, ["/learn", "/api/learn"])) {
+      const payload = await readJsonRequest(request);
+      const text = String(payload.text || "").trim();
+      if (!text) {
+        sendJson(response, 400, { error: "Add text to learn." });
+        return;
+      }
+
+      engine.knowledgeBase.learnFromText(text, payload.source || "local-note", payload.topic || "Local Note");
+      engine.cache.clear();
+      saveMemory();
+      sendJson(response, 200, { ok: true, facts: engine.knowledgeBase.facts.length });
+      return;
+    }
+
+    if (request.method === "POST" && isRoute(pathname, ["/scrape", "/api/scrape"])) {
+      if (scrapeInProgress) {
+        sendJson(response, 409, { error: "Scraping is already running." });
+        return;
+      }
+
+      const payload = await readJsonRequest(request);
+      const urls = parseUrls(payload.urls);
 
       if (urls.length === 0) {
         sendJson(response, 400, { error: "Add at least one URL." });
         return;
       }
 
-      const result = await scrapeUrls(urls, {
-        depth: payload.depth ? 1 : 0,
-        maxPages: payload.maxPages || 10
-      });
-      scrapedData = mergeScrapedData(scrapedData, result.scraped);
-      saveLocalData(scrapedData);
-      engine = createChatEngine(scrapedData);
-      sendJson(response, 200, {
-        ok: true,
-        added: result.scraped.length,
-        count: scrapedData.length,
-        errors: result.errors
-      });
+      scrapeInProgress = true;
+      try {
+        const result = await scrapeUrls(urls, {
+          depth: payload.depth ? 1 : 0,
+          maxPages: boundedNumber(payload.maxPages, 10, 1, maxPagesPerScrape)
+        });
+        const beforeCount = scrapedData.length;
+        scrapedData = mergeScrapedData(scrapedData, result.scraped);
+        saveLocalData(scrapedData);
+        rebuildEngine({ learnAll: true });
+        sendJson(response, 200, {
+          ok: true,
+          added: scrapedData.length - beforeCount,
+          scraped: result.scraped.length,
+          count: scrapedData.length,
+          errors: result.errors
+        });
+      } finally {
+        scrapeInProgress = false;
+      }
       return;
     }
 
-    if (request.method === "POST" && request.url === "/api/reset") {
-      scrapedData = sampleData;
+    if (request.method === "POST" && isRoute(pathname, ["/reset", "/api/reset"])) {
+      scrapedData = [];
+      queryHistory = [];
       saveLocalData(scrapedData);
-      engine = createChatEngine(scrapedData);
+      saveHistory(queryHistory);
+      engine = createChatEngine(scrapedData, { initialKnowledge: { topics: [], facts: [], summaries: [], feedback: [] } });
+      saveMemory();
       sendJson(response, 200, { ok: true, count: scrapedData.length });
       return;
     }
 
-    if (request.method === "POST" && request.url === "/api/chat") {
-      const payload = JSON.parse(await readBody(request));
+    if (request.method === "POST" && isRoute(pathname, ["/feedback", "/api/feedback"])) {
+      const payload = await readJsonRequest(request);
+      engine.knowledgeBase.addFeedback(payload);
+      engine.cache.clear();
+      saveMemory();
+      sendJson(response, 200, { ok: true, facts: engine.knowledgeBase.facts.length });
+      return;
+    }
+
+    if (request.method === "POST" && isRoute(pathname, ["/ask", "/api/chat"])) {
+      const payload = await readJsonRequest(request);
       const query = String(payload.query || "").trim();
       if (!query) {
         sendJson(response, 400, { error: "Query is required." });
         return;
       }
-      sendJson(response, 200, engine.ask(query, payload.user_profile || {}));
+      const answer = engine.ask(query, payload.user_profile || {});
+      queryHistory.push({
+        query,
+        answer: answer.answer,
+        confidence: answer.confidence,
+        citations: answer.sources,
+        createdAt: new Date().toISOString()
+      });
+      saveHistory(queryHistory);
+      saveMemory();
+      sendJson(response, 200, answer);
       return;
     }
 
     sendJson(response, 404, { error: "Not found." });
   } catch (error) {
-    sendJson(response, 500, { error: error.message });
+    const statusCode = error.statusCode || (error.message === "Request body too large." ? 413 : 500);
+    sendJson(response, statusCode, { error: error.message });
   }
 });
 

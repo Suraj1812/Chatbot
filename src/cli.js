@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { createChatEngine } from "./index.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const defaultDataPath = path.resolve(__dirname, "../data/sample-scraped-data.json");
+const defaultDataPath = path.resolve(__dirname, "../data/local-scraped-data.json");
 
 function parseArgs(argv) {
   const args = {
@@ -36,10 +36,11 @@ function loadScrapedData(dataPath) {
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.query) {
-  console.log("Usage: npm run cli -- \"your question\" --level beginner --data ./data/sample-scraped-data.json");
+  console.log("Usage: npm run cli -- \"your question\" --level beginner --data ./data/local-scraped-data.json");
   process.exit(0);
 }
 
-const engine = createChatEngine(loadScrapedData(args.data));
+const data = fs.existsSync(args.data) ? loadScrapedData(args.data) : [];
+const engine = createChatEngine(data);
 const response = engine.ask(args.query, { level: args.level });
 console.log(JSON.stringify(response, null, 2));

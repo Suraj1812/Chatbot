@@ -1,10 +1,15 @@
 import { normalizeText, tokenize } from "./tokenizer.js";
 
-function uniquePush(collection, value, keySelector = (item) => normalizeText(item)) {
+function upsertUnique(collection, value, keySelector = (item) => normalizeText(item)) {
   const key = keySelector(value);
   if (!key) return false;
-  const exists = collection.some((item) => keySelector(item) === key);
-  if (exists) return false;
+  const index = collection.findIndex((item) => keySelector(item) === key);
+  if (index >= 0) {
+    if (typeof value === "object" && value !== null && typeof collection[index] === "object" && collection[index] !== null) {
+      collection[index] = { ...collection[index], ...value, updatedAt: new Date().toISOString() };
+    }
+    return false;
+  }
   collection.push(value);
   return true;
 }
@@ -14,31 +19,68 @@ export class KnowledgeBase {
     this.topics = initial.topics || [];
     this.facts = initial.facts || [];
     this.summaries = initial.summaries || [];
+    this.feedback = initial.feedback || [];
   }
 
   learnFromResults(results = []) {
     for (const result of results) {
       const { item } = result;
-      uniquePush(this.topics, item.title);
+      upsertUnique(this.topics, item.title);
 
       for (const sentence of item.sentences || []) {
         if (this.looksLikeFact(sentence)) {
-          uniquePush(this.facts, {
+          upsertUnique(this.facts, {
             text: sentence,
             source: item.source,
-            topic: item.title
+            topic: item.title,
+            learnedAt: new Date().toISOString()
           }, (fact) => normalizeText(fact.text));
         }
       }
 
       const summary = this.summarizeItem(item);
       if (summary) {
-        uniquePush(this.summaries, {
+        upsertUnique(this.summaries, {
           topic: item.title,
           source: item.source,
-          summary
+          summary,
+          learnedAt: new Date().toISOString()
         }, (entry) => `${normalizeText(entry.topic)}:${normalizeText(entry.summary)}`);
       }
+    }
+  }
+
+  learnFromText(text, source = "local-note", topic = "Local Note") {
+    const sentences = String(text || "")
+      .split(/(?<=[.!?])\s+|\n+/)
+      .map((sentence) => sentence.trim())
+      .filter(Boolean);
+
+    const item = {
+      title: topic,
+      source,
+      sentences
+    };
+
+    this.learnFromResults([{ item, score: 1 }]);
+  }
+
+  addFeedback(entry = {}) {
+    this.feedback.push({
+      query: String(entry.query || ""),
+      answer: String(entry.answer || ""),
+      rating: entry.rating === "down" ? "down" : "up",
+      note: String(entry.note || ""),
+      createdAt: new Date().toISOString()
+    });
+
+    if (entry.rating === "up" && entry.answer) {
+      upsertUnique(this.facts, {
+        text: entry.answer,
+        source: "user-approved-answer",
+        topic: entry.query || "Approved Answer",
+        learnedAt: new Date().toISOString()
+      }, (fact) => normalizeText(fact.text));
     }
   }
 
@@ -61,10 +103,11 @@ export class KnowledgeBase {
         for (const term of queryTerms) {
           if (factTerms.has(term)) overlap += 1;
         }
-        return { ...fact, score: overlap };
+        const approvedBoost = fact.source === "user-approved-answer" ? 2 : 0;
+        return { ...fact, overlap, score: overlap + approvedBoost };
       })
       .filter((fact) => fact.score > 0)
-      .sort((left, right) => right.score - left.score)
+      .sort((left, right) => right.overlap - left.overlap || right.score - left.score)
       .slice(0, limit);
   }
 
@@ -72,7 +115,8 @@ export class KnowledgeBase {
     return {
       topics: this.topics,
       facts: this.facts,
-      summaries: this.summaries
+      summaries: this.summaries,
+      feedback: this.feedback
     };
   }
 }

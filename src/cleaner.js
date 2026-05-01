@@ -46,7 +46,9 @@ export function cleanScrapedItem(item, id = 0) {
     title,
     source,
     content: meaningful.join(" "),
-    sentences: meaningful
+    sentences: meaningful,
+    contentHash: item?.contentHash || "",
+    lastUpdated: item?.lastUpdated || item?.scrapedAt || ""
   };
 }
 

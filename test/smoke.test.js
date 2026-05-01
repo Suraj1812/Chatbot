@@ -1,15 +1,43 @@
 import assert from "node:assert/strict";
-import sampleData from "../data/sample-scraped-data.json" with { type: "json" };
 import { cleanScrapedData, createChatEngine, scrapeHtml } from "../src/index.js";
 
-const cleaned = cleanScrapedData(sampleData);
+const testData = [
+  {
+    title: "Local Engine Facts",
+    content:
+      "A local knowledge engine answers only from stored local data. It can clean scraped pages, index useful facts, and reuse approved answers. Advertisement: buy traffic today.",
+    source: "test/local-engine"
+  },
+  {
+    title: "Scraped Data Cleaning",
+    content:
+      "Data cleaning removes ads, repeated boilerplate, duplicated sentences, and unrelated paragraphs. Meaningful sentences contain facts, definitions, comparisons, dates, entities, or explanations.",
+    source: "test/data-cleaning"
+  },
+  {
+    title: "Offline Architecture",
+    content:
+      "Offline chatbots should avoid external APIs when privacy, cost control, or disconnected use matters. A modular Node.js system can combine scraping, indexing, memory, and source-backed answers.",
+    source: "test/offline-architecture"
+  },
+  {
+    title: "Local URL Scraping",
+    content:
+      "A production local scraper should fetch HTML directly, remove scripts and styles, extract readable main content, keep the page title, and store the source URL.",
+    source: "test/local-url-scraping"
+  }
+];
+
+const cleaned = cleanScrapedData(testData);
 assert.equal(cleaned.length, 4);
 assert.ok(!cleaned[0].content.toLowerCase().includes("advertisement: buy traffic today"));
 
-const engine = createChatEngine(sampleData);
+const engine = createChatEngine(testData);
 const first = engine.ask("How does the system clean scraped data?", { level: "advanced" });
 
 assert.ok(first["Direct Answer"].length > 0);
+assert.ok(first.answer.length > 0);
+assert.equal(typeof first.confidence, "number");
 assert.ok(first.metadata.matchedSources.length > 0);
 assert.ok(engine.knowledgeBase.facts.length > 0);
 

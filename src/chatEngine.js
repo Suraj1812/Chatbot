@@ -27,7 +27,11 @@ function buildDirectAnswer(query, analysis, relevantFacts) {
       .join(" ");
   }
 
-  return `I could not find enough local scraped data to answer "${query}" reliably.`;
+  return "No sufficient local data found";
+}
+
+function citationSources(facts) {
+  return [...new Set(facts.map((fact) => fact.source).filter(Boolean))].slice(0, 4);
 }
 
 function factsFromRankedSentences(query, results) {
@@ -54,17 +58,16 @@ function factsFromRankedSentences(query, results) {
     .sort((left, right) => right.overlap - left.overlap || right.score - left.score);
 }
 
-function confidenceFrom(results, analysis) {
-  if (results.length === 0) return "low";
-  const top = results[0].score;
+function confidenceFrom(results, analysis, relevantFacts) {
+  if (results.length === 0 && relevantFacts.length === 0) return 0;
+  const top = results[0]?.score || relevantFacts[0]?.score || 0;
   const second = results[1]?.score || 0;
   const spread = top - second;
   const sourceBonus = Math.min(analysis.sourceCount, 3) * 0.15;
   const conflictPenalty = analysis.contradictions.length ? 0.5 : 0;
-  const confidence = top * 0.16 + spread * 0.08 + sourceBonus - conflictPenalty;
-  if (confidence >= 0.9) return "high";
-  if (confidence >= 0.45) return "medium";
-  return "low";
+  const factBonus = Math.min(relevantFacts.length, 3) * 0.08;
+  const raw = top * 0.11 + spread * 0.06 + sourceBonus + factBonus - conflictPenalty;
+  return Number(Math.max(0, Math.min(1, raw)).toFixed(2));
 }
 
 function buildExplanation(results, analysis) {
@@ -98,16 +101,17 @@ export class ChatEngine {
     this.knowledgeBase = options.knowledgeBase || new KnowledgeBase(options.initialKnowledge);
     this.relevanceEngine = new RelevanceEngine(this.cleanedData);
     this.cache = new Map();
+    this.cacheLimit = options.cacheLimit || 100;
   }
 
   ask(query, userProfile = {}) {
     const profile = normalizeUserProfile(userProfile);
     const cacheKey = JSON.stringify({ query, level: profile.level });
     if (this.cache.has(cacheKey)) {
-      return {
-        ...this.cache.get(cacheKey),
-        cached: true
-      };
+      const cached = this.cache.get(cacheKey);
+      this.cache.delete(cacheKey);
+      this.cache.set(cacheKey, cached);
+      return { ...cached, cached: true };
     }
 
     const results = this.relevanceEngine.rank(query, { limit: 5 });
@@ -117,14 +121,31 @@ export class ChatEngine {
       ...this.knowledgeBase.findRelevantFacts(query)
     ];
     const analysis = analyzeSources(results);
+    const bestFacts = relevantFacts.slice(0, 3);
+    const confidence = confidenceFrom(results, analysis, relevantFacts);
+    const directAnswer = adjustForLevel(buildDirectAnswer(query, analysis, relevantFacts), profile.level);
+    const topChunks = bestFacts.map((fact) => ({
+      text: fact.text,
+      source: fact.source,
+      topic: fact.topic,
+      score: Number((fact.score || 0).toFixed(4))
+    }));
 
     const response = {
-      "Direct Answer": adjustForLevel(buildDirectAnswer(query, analysis, relevantFacts), profile.level),
+      answer: directAnswer,
+      confidence,
+      sources: citationSources(bestFacts),
+      chunks: topChunks,
+      contradictions: analysis.contradictions,
+      "Direct Answer": directAnswer,
       "Explanation": adjustForLevel(buildExplanation(results, analysis), profile.level),
       "Contextual Advice": formatAdvice(profile, analysis.contradictions.length > 0),
       "Suggestions": buildSuggestions(results, query),
       metadata: {
-        confidence: confidenceFrom(results, analysis),
+        confidence,
+        citations: citationSources(bestFacts),
+        chunks: topChunks,
+        learnedFactCount: this.knowledgeBase.facts.length,
         matchedSources: results.map((result) => ({
           title: result.item.title,
           source: result.item.source,
@@ -137,6 +158,9 @@ export class ChatEngine {
     };
 
     this.cache.set(cacheKey, response);
+    if (this.cache.size > this.cacheLimit) {
+      this.cache.delete(this.cache.keys().next().value);
+    }
     return response;
   }
 }

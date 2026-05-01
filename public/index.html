@@ -84,6 +84,14 @@
         font-weight: 700;
       }
 
+      button:disabled,
+      select:disabled,
+      textarea:disabled,
+      input:disabled {
+        cursor: not-allowed;
+        opacity: 0.62;
+      }
+
       button.primary {
         border-color: var(--accent);
         background: var(--accent);
@@ -154,6 +162,36 @@
       .assistant .bubble {
         padding-left: 0;
         padding-right: 0;
+      }
+
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .pill {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 8px;
+        background: #fff;
+        color: var(--muted);
+      }
+
+      .mini-actions {
+        display: flex;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .mini-actions button {
+        height: 30px;
+        padding: 0 9px;
+        font-size: 12px;
       }
 
       .composer-wrap {
@@ -242,6 +280,22 @@
         background: #fff;
       }
 
+      .learn-bar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .learn-bar textarea {
+        min-height: 54px;
+        max-height: 120px;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+
       .scrape-bar input {
         min-width: 0;
         height: 38px;
@@ -309,6 +363,10 @@
         .scrape-bar {
           grid-template-columns: 1fr;
         }
+
+        .learn-bar {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
@@ -340,7 +398,7 @@
       <div class="composer-wrap">
         <form class="composer" id="chat-form">
           <textarea id="query" rows="1" placeholder="Ask anything..." autocomplete="off"></textarea>
-          <button class="primary" type="submit">Ask</button>
+          <button class="primary" id="ask-button" type="submit">Ask</button>
         </form>
         <div class="status" id="status"></div>
       </div>
@@ -355,6 +413,10 @@
         <input id="scrape-url" placeholder="https://example.com/page" />
         <label><input id="scrape-deep" type="checkbox" /> Follow links</label>
         <button id="scrape-data" type="button">Scrape</button>
+      </div>
+      <div class="learn-bar">
+        <textarea id="learn-text" rows="2" placeholder="Teach it a local note..."></textarea>
+        <button id="learn-data" type="button">Learn</button>
       </div>
       <textarea id="data-input" spellcheck="false"></textarea>
       <div class="data-actions">
@@ -375,8 +437,17 @@
       const levelInput = document.querySelector("#level");
       const scrapeUrlInput = document.querySelector("#scrape-url");
       const scrapeDeepInput = document.querySelector("#scrape-deep");
+      const askButton = document.querySelector("#ask-button");
+      const scrapeButton = document.querySelector("#scrape-data");
+      const saveButton = document.querySelector("#save-data");
+      const resetButton = document.querySelector("#reset-data");
+      const openDataButton = document.querySelector("#open-data");
+      const learnTextInput = document.querySelector("#learn-text");
+      const learnButton = document.querySelector("#learn-data");
 
       let sourceTotal = 0;
+      let lastAnswer = null;
+      let lastQuery = "";
 
       function setStatus(text = "", isError = true) {
         statusLine.style.color = isError ? "var(--error)" : "var(--muted)";
@@ -386,6 +457,46 @@
       function resizeInput() {
         queryInput.style.height = "auto";
         queryInput.style.height = `${Math.min(queryInput.scrollHeight, 160)}px`;
+      }
+
+      function setBusy(type, busy) {
+        if (type === "chat") {
+          askButton.disabled = busy;
+          queryInput.disabled = busy;
+          levelInput.disabled = busy;
+          askButton.textContent = busy ? "..." : "Ask";
+        }
+
+        if (type === "data") {
+          saveButton.disabled = busy;
+          resetButton.disabled = busy;
+          dataInput.disabled = busy;
+          openDataButton.disabled = busy;
+          learnButton.disabled = busy;
+          learnTextInput.disabled = busy;
+          saveButton.textContent = busy ? "Saving..." : "Save";
+        }
+
+        if (type === "scrape") {
+          scrapeButton.disabled = busy;
+          scrapeUrlInput.disabled = busy;
+          scrapeDeepInput.disabled = busy;
+          saveButton.disabled = busy;
+          resetButton.disabled = busy;
+          dataInput.disabled = busy;
+          learnButton.disabled = busy;
+          learnTextInput.disabled = busy;
+          scrapeButton.textContent = busy ? "Scraping..." : "Scrape";
+        }
+
+        if (type === "learn") {
+          learnButton.disabled = busy;
+          learnTextInput.disabled = busy;
+          scrapeButton.disabled = busy;
+          saveButton.disabled = busy;
+          resetButton.disabled = busy;
+          learnButton.textContent = busy ? "Learning..." : "Learn";
+        }
       }
 
       function refreshEmptyState() {
@@ -401,7 +512,36 @@
         bubble.className = "bubble";
 
         if (role === "assistant" && payload) {
-          bubble.textContent = payload["Direct Answer"] || "";
+          const answerText = payload["Direct Answer"] || "";
+          bubble.textContent = answerText;
+          const meta = document.createElement("div");
+          meta.className = "meta-row";
+          const confidence = document.createElement("span");
+          confidence.className = "pill";
+          const percent = Math.round((payload.confidence || 0) * 100);
+          confidence.textContent = `confidence ${percent}%`;
+          meta.append(confidence);
+          for (const citation of payload.sources || []) {
+            const source = document.createElement("span");
+            source.className = "pill";
+            source.textContent = citation;
+            meta.append(source);
+          }
+          bubble.append(meta);
+
+          const actions = document.createElement("div");
+          actions.className = "mini-actions";
+          const good = document.createElement("button");
+          good.type = "button";
+          good.textContent = "Good";
+          const feedbackQuery = lastQuery;
+          good.addEventListener("click", () => sendFeedback("up", feedbackQuery, answerText, good, bad));
+          const bad = document.createElement("button");
+          bad.type = "button";
+          bad.textContent = "Bad";
+          bad.addEventListener("click", () => sendFeedback("down", feedbackQuery, answerText, bad, good));
+          actions.append(good, bad);
+          bubble.append(actions);
         } else {
           bubble.textContent = text;
         }
@@ -420,11 +560,35 @@
       }
 
       async function loadData() {
-        const payload = await requestJson("/api/data");
+        const payload = await requestJson("/data");
         sourceTotal = payload.scrapedData.length;
-        sourceCount.textContent = `${sourceTotal} sources`;
+        const factTotal = payload.knowledgeBase?.facts?.length || 0;
+        sourceCount.textContent = `${sourceTotal} sources · ${factTotal} facts`;
         dataInput.value = JSON.stringify(payload.scrapedData, null, 2);
         refreshEmptyState();
+      }
+
+      async function sendFeedback(rating, query, answer, clicked, other) {
+        if (!answer || !query) return;
+        clicked.disabled = true;
+        other.disabled = true;
+        try {
+          await requestJson("/feedback", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              rating,
+              query,
+              answer
+            })
+          });
+          clicked.textContent = rating === "up" ? "Saved" : "Noted";
+          await loadData();
+        } catch (error) {
+          setStatus(error.message);
+          clicked.disabled = false;
+          other.disabled = false;
+        }
       }
 
       document.querySelector("#chat-form").addEventListener("submit", async (event) => {
@@ -436,9 +600,10 @@
         queryInput.value = "";
         resizeInput();
         setStatus("Thinking...", false);
+        setBusy("chat", true);
 
         try {
-          const payload = await requestJson("/api/chat", {
+          const payload = await requestJson("/ask", {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
@@ -446,10 +611,14 @@
               user_profile: { level: levelInput.value }
             })
           });
+          lastQuery = query;
+          lastAnswer = payload["Direct Answer"] || "";
           addMessage("assistant", "", payload);
           setStatus("");
         } catch (error) {
           setStatus(error.message);
+        } finally {
+          setBusy("chat", false);
         }
       });
 
@@ -466,9 +635,10 @@
 
       document.querySelector("#save-data").addEventListener("click", async () => {
         setStatus("");
+        setBusy("data", true);
         try {
           const scraped_data = JSON.parse(dataInput.value);
-          const payload = await requestJson("/api/data", {
+          const payload = await requestJson("/data", {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({ scraped_data })
@@ -480,6 +650,8 @@
           setStatus("Saved.", false);
         } catch (error) {
           setStatus(error.message);
+        } finally {
+          setBusy("data", false);
         }
       });
 
@@ -487,8 +659,9 @@
         const urls = scrapeUrlInput.value.trim();
         if (!urls) return;
         setStatus("Scraping...", false);
+        setBusy("scrape", true);
         try {
-          const payload = await requestJson("/api/scrape", {
+          const payload = await requestJson("/scrape", {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({
@@ -503,15 +676,49 @@
           setStatus(`Added ${payload.added}.${warning}`, false);
         } catch (error) {
           setStatus(error.message);
+        } finally {
+          setBusy("scrape", false);
+        }
+      });
+
+      document.querySelector("#learn-data").addEventListener("click", async () => {
+        const text = learnTextInput.value.trim();
+        if (!text) return;
+        setStatus("Learning...", false);
+        setBusy("learn", true);
+        try {
+          await requestJson("/learn", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              text,
+              source: "local-note",
+              topic: "Local Note"
+            })
+          });
+          learnTextInput.value = "";
+          await loadData();
+          setStatus("Learned.", false);
+        } catch (error) {
+          setStatus(error.message);
+        } finally {
+          setBusy("learn", false);
         }
       });
 
       document.querySelector("#reset-data").addEventListener("click", async () => {
-        const payload = await requestJson("/api/reset", { method: "POST" });
-        sourceTotal = payload.count;
-        await loadData();
-        dataDialog.close();
-        setStatus("Reset.", false);
+        setBusy("data", true);
+        try {
+          const payload = await requestJson("/reset", { method: "POST" });
+          sourceTotal = payload.count;
+          await loadData();
+          dataDialog.close();
+          setStatus("Reset.", false);
+        } catch (error) {
+          setStatus(error.message);
+        } finally {
+          setBusy("data", false);
+        }
       });
 
       loadData().catch((error) => setStatus(error.message));
