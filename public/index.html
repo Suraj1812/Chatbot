@@ -3,18 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Local Knowledge Chatbot</title>
+    <title>Local Chat</title>
     <style>
       :root {
         color-scheme: light;
-        --ink: #172026;
-        --muted: #5b6770;
-        --line: #d6dde2;
-        --panel: #ffffff;
-        --wash: #f4f7f8;
-        --accent: #136f63;
-        --accent-strong: #0f594f;
-        --warn: #915f12;
+        --bg: #f7f8f5;
+        --ink: #18211f;
+        --muted: #65706c;
+        --line: #d9dfda;
+        --soft: #eef2ee;
+        --user: #173f35;
+        --accent: #23715f;
+        --accent-hover: #1b5d4e;
+        --error: #9a3d1c;
       }
 
       * {
@@ -23,252 +24,432 @@
 
       body {
         margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
         color: var(--ink);
-        background: var(--wash);
         font-family: Arial, Helvetica, sans-serif;
       }
 
-      main {
-        width: min(1120px, calc(100% - 32px));
-        margin: 24px auto;
+      .app {
+        min-height: 100vh;
         display: grid;
-        grid-template-columns: minmax(280px, 380px) 1fr;
-        gap: 18px;
+        grid-template-rows: auto 1fr auto;
       }
 
       header {
-        grid-column: 1 / -1;
+        height: 58px;
+        padding: 0 18px;
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        align-items: end;
-        gap: 16px;
-      }
-
-      h1,
-      h2 {
-        margin: 0;
-        letter-spacing: 0;
+        border-bottom: 1px solid var(--line);
+        background: rgba(247, 248, 245, 0.96);
+        position: sticky;
+        top: 0;
+        z-index: 2;
       }
 
       h1 {
-        font-size: 28px;
-      }
-
-      h2 {
-        font-size: 16px;
-      }
-
-      p {
-        margin: 6px 0 0;
-        color: var(--muted);
-      }
-
-      section {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        padding: 16px;
-      }
-
-      label {
-        display: block;
-        margin: 14px 0 6px;
+        margin: 0;
+        font-size: 18px;
         font-weight: 700;
-        font-size: 13px;
+        letter-spacing: 0;
       }
 
-      textarea,
-      input,
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .count {
+        color: var(--muted);
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      button,
       select {
-        width: 100%;
+        height: 38px;
         border: 1px solid var(--line);
         border-radius: 6px;
-        padding: 10px;
-        font: inherit;
         background: #fff;
-      }
-
-      textarea {
-        min-height: 230px;
-        resize: vertical;
+        color: var(--ink);
+        font: inherit;
       }
 
       button {
-        border: 0;
-        border-radius: 6px;
-        padding: 10px 12px;
-        color: #fff;
-        background: var(--accent);
-        font: inherit;
-        font-weight: 700;
+        padding: 0 12px;
         cursor: pointer;
+        font-weight: 700;
       }
 
-      button:hover {
-        background: var(--accent-strong);
+      button.primary {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
       }
 
-      .row {
-        display: flex;
-        gap: 8px;
-        align-items: center;
+      button.primary:hover {
+        background: var(--accent-hover);
       }
 
-      .row > * {
-        flex: 1;
+      select {
+        padding: 0 8px;
       }
 
-      .answer {
+      .chat {
+        width: min(860px, 100%);
+        margin: 0 auto;
+        padding: 22px 16px 120px;
+      }
+
+      .empty {
+        min-height: calc(100vh - 210px);
         display: grid;
-        gap: 12px;
-      }
-
-      .answer-block {
-        border-top: 1px solid var(--line);
-        padding-top: 12px;
-      }
-
-      .answer-block:first-child {
-        border-top: 0;
-        padding-top: 0;
-      }
-
-      .answer-block strong {
-        display: block;
-        margin-bottom: 4px;
-      }
-
-      .meta {
+        place-items: center;
+        text-align: center;
         color: var(--muted);
-        font-size: 13px;
+      }
+
+      .empty h2 {
+        margin: 0 0 8px;
+        color: var(--ink);
+        font-size: 28px;
+        letter-spacing: 0;
+      }
+
+      .empty p {
+        margin: 0;
+        font-size: 15px;
+      }
+
+      .messages {
+        display: grid;
+        gap: 18px;
+      }
+
+      .message {
+        display: grid;
+        gap: 8px;
+      }
+
+      .message.user {
+        justify-items: end;
+      }
+
+      .bubble {
+        max-width: min(690px, 100%);
+        padding: 12px 14px;
+        border-radius: 8px;
+        line-height: 1.48;
         white-space: pre-wrap;
       }
 
+      .user .bubble {
+        background: var(--user);
+        color: #fff;
+      }
+
+      .assistant .bubble {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .composer-wrap {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 14px 16px 18px;
+        background: linear-gradient(to top, var(--bg) 82%, rgba(247, 248, 245, 0));
+      }
+
+      .composer {
+        width: min(860px, 100%);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 48px;
+        max-height: 160px;
+        resize: none;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 13px 14px;
+        background: #fff;
+        color: var(--ink);
+        font: inherit;
+        line-height: 1.35;
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: var(--accent);
+      }
+
       .status {
-        min-height: 20px;
-        color: var(--warn);
+        width: min(860px, 100%);
+        min-height: 18px;
+        margin: 6px auto 0;
+        color: var(--error);
         font-size: 13px;
       }
 
-      @media (max-width: 780px) {
-        main {
-          grid-template-columns: 1fr;
-          margin: 16px auto;
+      dialog {
+        width: min(760px, calc(100% - 28px));
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0;
+        color: var(--ink);
+      }
+
+      dialog::backdrop {
+        background: rgba(20, 28, 25, 0.34);
+      }
+
+      .data-head,
+      .data-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 14px;
+      }
+
+      .data-head {
+        border-bottom: 1px solid var(--line);
+      }
+
+      .data-head strong {
+        font-size: 16px;
+      }
+
+      .data-actions {
+        border-top: 1px solid var(--line);
+      }
+
+      #data-input {
+        min-height: 420px;
+        border: 0;
+        border-radius: 0;
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 13px;
+      }
+
+      .ghost {
+        background: transparent;
+      }
+
+      @media (max-width: 640px) {
+        header {
+          padding: 0 12px;
         }
 
-        header {
-          display: block;
+        h1 {
+          font-size: 16px;
+        }
+
+        .count {
+          display: none;
+        }
+
+        select {
+          width: 104px;
+        }
+
+        .chat {
+          padding-inline: 12px;
+        }
+
+        .empty h2 {
+          font-size: 22px;
+        }
+
+        .composer-wrap {
+          padding-inline: 12px;
         }
       }
     </style>
   </head>
   <body>
-    <main>
+    <div class="app">
       <header>
-        <div>
-          <h1>Local Knowledge Chatbot</h1>
-          <p>Answers from local scraped data only.</p>
+        <h1>Local Chat</h1>
+        <div class="topbar">
+          <span class="count" id="source-count"></span>
+          <select id="level" aria-label="Level">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate" selected>Normal</option>
+            <option value="advanced">Advanced</option>
+          </select>
+          <button id="open-data" type="button">Data</button>
         </div>
-        <p id="source-count">Loading sources...</p>
       </header>
 
-      <section>
-        <h2>Scraped Data</h2>
-        <label for="data">JSON input</label>
-        <textarea id="data" spellcheck="false"></textarea>
-        <button id="save-data" type="button">Save Local Data</button>
-        <p class="status" id="data-status"></p>
-      </section>
-
-      <section>
-        <h2>Ask</h2>
-        <label for="level">User level</label>
-        <select id="level">
-          <option value="beginner">Beginner</option>
-          <option value="intermediate" selected>Intermediate</option>
-          <option value="advanced">Advanced</option>
-        </select>
-
-        <label for="query">Question</label>
-        <div class="row">
-          <input id="query" value="How should I build an offline chatbot?" />
-          <button id="ask" type="button">Ask</button>
+      <main class="chat">
+        <div class="empty" id="empty">
+          <div>
+            <h2>Ask your local data.</h2>
+            <p id="empty-subtitle"></p>
+          </div>
         </div>
+        <div class="messages" id="messages"></div>
+      </main>
 
-        <p class="status" id="chat-status"></p>
-        <div class="answer" id="answer"></div>
-      </section>
-    </main>
+      <div class="composer-wrap">
+        <form class="composer" id="chat-form">
+          <textarea id="query" rows="1" placeholder="Ask anything..." autocomplete="off"></textarea>
+          <button class="primary" type="submit">Ask</button>
+        </form>
+        <div class="status" id="status"></div>
+      </div>
+    </div>
+
+    <dialog id="data-dialog">
+      <div class="data-head">
+        <strong>Data</strong>
+        <button class="ghost" id="close-data" type="button">Close</button>
+      </div>
+      <textarea id="data-input" spellcheck="false"></textarea>
+      <div class="data-actions">
+        <button id="reset-data" type="button">Reset</button>
+        <button class="primary" id="save-data" type="button">Save</button>
+      </div>
+    </dialog>
 
     <script>
-      const dataInput = document.querySelector("#data");
-      const dataStatus = document.querySelector("#data-status");
-      const chatStatus = document.querySelector("#chat-status");
-      const answer = document.querySelector("#answer");
+      const messages = document.querySelector("#messages");
+      const empty = document.querySelector("#empty");
+      const emptySubtitle = document.querySelector("#empty-subtitle");
+      const statusLine = document.querySelector("#status");
+      const queryInput = document.querySelector("#query");
       const sourceCount = document.querySelector("#source-count");
+      const dataDialog = document.querySelector("#data-dialog");
+      const dataInput = document.querySelector("#data-input");
+      const levelInput = document.querySelector("#level");
 
-      function renderAnswer(payload) {
-        answer.innerHTML = "";
-        for (const key of ["Direct Answer", "Explanation", "Contextual Advice", "Suggestions"]) {
-          const block = document.createElement("div");
-          block.className = "answer-block";
-          block.innerHTML = `<strong>${key}</strong><div></div>`;
-          block.querySelector("div").textContent = payload[key] || "";
-          answer.appendChild(block);
+      let sourceTotal = 0;
+
+      function setStatus(text = "", isError = true) {
+        statusLine.style.color = isError ? "var(--error)" : "var(--muted)";
+        statusLine.textContent = text;
+      }
+
+      function resizeInput() {
+        queryInput.style.height = "auto";
+        queryInput.style.height = `${Math.min(queryInput.scrollHeight, 160)}px`;
+      }
+
+      function refreshEmptyState() {
+        empty.hidden = messages.children.length > 0;
+        emptySubtitle.textContent = sourceTotal ? `${sourceTotal} sources ready` : "";
+      }
+
+      function addMessage(role, text, payload) {
+        const wrap = document.createElement("div");
+        wrap.className = `message ${role}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+
+        if (role === "assistant" && payload) {
+          bubble.textContent = payload["Direct Answer"] || "";
+        } else {
+          bubble.textContent = text;
         }
 
-        const meta = document.createElement("details");
-        meta.className = "meta";
-        meta.innerHTML = "<summary>Local match details</summary><pre></pre>";
-        meta.querySelector("pre").textContent = JSON.stringify(payload.metadata?.matchedSources || [], null, 2);
-        answer.appendChild(meta);
+        wrap.append(bubble);
+        messages.append(wrap);
+        refreshEmptyState();
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      }
+
+      async function requestJson(url, options) {
+        const response = await fetch(url, options);
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "Something went wrong.");
+        return payload;
       }
 
       async function loadData() {
-        const response = await fetch("/api/data");
-        const payload = await response.json();
+        const payload = await requestJson("/api/data");
+        sourceTotal = payload.scrapedData.length;
+        sourceCount.textContent = `${sourceTotal} sources`;
         dataInput.value = JSON.stringify(payload.scrapedData, null, 2);
-        sourceCount.textContent = `${payload.scrapedData.length} local sources`;
+        refreshEmptyState();
       }
 
+      document.querySelector("#chat-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const query = queryInput.value.trim();
+        if (!query) return;
+
+        addMessage("user", query);
+        queryInput.value = "";
+        resizeInput();
+        setStatus("Thinking...", false);
+
+        try {
+          const payload = await requestJson("/api/chat", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              query,
+              user_profile: { level: levelInput.value }
+            })
+          });
+          addMessage("assistant", "", payload);
+          setStatus("");
+        } catch (error) {
+          setStatus(error.message);
+        }
+      });
+
+      queryInput.addEventListener("input", resizeInput);
+      queryInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          document.querySelector("#chat-form").requestSubmit();
+        }
+      });
+
+      document.querySelector("#open-data").addEventListener("click", () => dataDialog.showModal());
+      document.querySelector("#close-data").addEventListener("click", () => dataDialog.close());
+
       document.querySelector("#save-data").addEventListener("click", async () => {
-        dataStatus.textContent = "";
+        setStatus("");
         try {
           const scraped_data = JSON.parse(dataInput.value);
-          const response = await fetch("/api/data", {
+          const payload = await requestJson("/api/data", {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({ scraped_data })
           });
-          const payload = await response.json();
-          if (!response.ok) throw new Error(payload.error || "Unable to save data.");
-          sourceCount.textContent = `${payload.count} local sources`;
-          dataStatus.textContent = "Saved.";
+          sourceTotal = payload.count;
+          sourceCount.textContent = `${sourceTotal} sources`;
+          refreshEmptyState();
+          dataDialog.close();
+          setStatus("Saved.", false);
         } catch (error) {
-          dataStatus.textContent = error.message;
+          setStatus(error.message);
         }
       });
 
-      document.querySelector("#ask").addEventListener("click", async () => {
-        chatStatus.textContent = "";
-        try {
-          const response = await fetch("/api/chat", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({
-              query: document.querySelector("#query").value,
-              user_profile: { level: document.querySelector("#level").value }
-            })
-          });
-          const payload = await response.json();
-          if (!response.ok) throw new Error(payload.error || "Unable to answer.");
-          renderAnswer(payload);
-        } catch (error) {
-          chatStatus.textContent = error.message;
-        }
+      document.querySelector("#reset-data").addEventListener("click", async () => {
+        const payload = await requestJson("/api/reset", { method: "POST" });
+        sourceTotal = payload.count;
+        await loadData();
+        dataDialog.close();
+        setStatus("Reset.", false);
       });
 
-      loadData();
+      loadData().catch((error) => setStatus(error.message));
+      resizeInput();
     </script>
   </body>
 </html>
