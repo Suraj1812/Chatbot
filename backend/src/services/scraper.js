@@ -91,10 +91,35 @@ function isBoilerplate(text) {
   return false;
 }
 
+function hasNoiseAttribute(value) {
+  const normalized = String(value || "").toLowerCase();
+  if (!normalized) return false;
+  const tokens = normalized.split(/[^a-z0-9]+/).filter(Boolean);
+  return tokens.some((token) => {
+    return token === "ad" ||
+      token === "ads" ||
+      token === "advert" ||
+      token === "advertisement" ||
+      token === "cookie" ||
+      token === "cookies" ||
+      token === "promo" ||
+      token === "promoted" ||
+      token === "newsletter" ||
+      token === "sidebar" ||
+      token === "modal" ||
+      token === "banner";
+  });
+}
+
 function extractContent(html, source) {
   const $ = cheerio.load(html);
   $("script, style, noscript, svg, nav, footer, aside, form, iframe, header").remove();
-  $("[class*='ad'], [id*='ad'], [class*='cookie'], [id*='cookie'], [class*='promo'], [class*='newsletter'], [class*='sidebar'], [class*='modal'], [class*='banner']").remove();
+  $("sup.reference, .reference, .references, .reflist, .mw-references-wrap, .navbox, .metadata, .ambox, .hatnote, .printfooter").remove();
+  $("[class], [id]").each((_, element) => {
+    const className = $(element).attr("class");
+    const id = $(element).attr("id");
+    if (hasNoiseAttribute(className) || hasNoiseAttribute(id)) $(element).remove();
+  });
 
   const title = cleanWhitespace($("meta[property='og:title']").attr("content") || $("title").first().text() || source);
   const root = $("article").first().length ? $("article").first() : $("main").first().length ? $("main").first() : $("body");

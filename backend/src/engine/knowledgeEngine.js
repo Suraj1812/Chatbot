@@ -22,7 +22,9 @@ const BROAD_TOKENS = new Set([
 const HONORIFIC_TOKENS = new Set(["maa", "ma", "mata", "shri", "sri", "lord"]);
 const SUBJECT_MODIFIER_TOKENS = new Set([
   "article", "biography", "course", "engine", "family", "father", "guide", "history",
-  "mother", "page", "profile", "son", "story", "tutorial", "wife"
+  "mother", "page", "profile", "son", "story", "tutorial", "wife", "library",
+  "database", "framework", "language", "runtime", "ranking", "rank", "search",
+  "state", "management", "html", "parser", "parsing"
 ]);
 const HOW_ACTION_TOKENS = new Set([
   "apply", "become", "brew", "build", "complete", "cook", "create", "earn", "follow",
@@ -31,7 +33,7 @@ const HOW_ACTION_TOKENS = new Set([
 ]);
 const HOW_PROCESS_PATTERNS = /\b(apply|become|brew|build|complete|cook|create|earn|follow|grind|heat|learn|made|make|method|mix|prepare|practice|process|steps?|start|study|train|use|write)\b/i;
 const DEFINITION_PATTERNS = /\b(is|are|was|were|refers to|means|known as|known for|called|serves as|leader|politician|goddess|god|deity|river|city|district|state|person|founder|actor|singer|writer|minister|president|prime minister)\b/i;
-const OVERVIEW_BAD_PATTERNS = /\b(address|administration|biopic|book|controversy|drama|episode|explore|faq|film|movie|near|opinion polling|parking|places to visit|poems?|question|relationship|religious places|temples?|mandir|gurudwara|visit near|best time to visit|answer)\b/i;
+const OVERVIEW_BAD_PATTERNS = /\b(address|administration|biopic|book|controversy|drama|episode|explore|faq|film|movie|mother|father|wife|husband|son|daughter|family|near|opinion polling|parking|places to visit|poems?|question|relationship|religious places|temples?|mandir|gurudwara|visit near|best time to visit|answer)\b/i;
 const OVERVIEW_GOOD_PATTERNS = /\b(is|are|city|district|state|located|known for|famous for|population|part of|region|area|capital|founded|established)\b/i;
 
 function isFactLike(sentence) {
@@ -105,20 +107,21 @@ function directIdentityFocus(result, specificTokens) {
   if (!specificTokens.length) return true;
   const textTokens = result.textTokens || uniqueTokens(result.text);
   if (!specificTokens.every((token) => textTokens.includes(token))) return false;
-  const rawTokens = normalizeText(result.text).split(/\s+/).filter(Boolean);
-  const positions = specificTokens.map((token) => rawTokens.findIndex((candidate) => candidate === token));
+  const focusTokens = specificTokens.filter((token) => !SUBJECT_MODIFIER_TOKENS.has(token));
+  const requiredFocusTokens = focusTokens.length ? focusTokens : specificTokens.slice(0, 2);
+  const positionTokens = tokenize(result.text);
+  const positions = requiredFocusTokens.map((token) => positionTokens.findIndex((candidate) => candidate === token));
   if (positions.some((position) => position < 0)) return false;
 
-  if (specificTokens.length === 1) {
+  if (requiredFocusTokens.length === 1) {
     const position = positions[0];
-    const nextToken = textTokens[textTokens.indexOf(specificTokens[0]) + 1];
+    const nextToken = textTokens[textTokens.indexOf(requiredFocusTokens[0]) + 1];
     return position <= 1 && !SUBJECT_MODIFIER_TOKENS.has(nextToken);
   }
 
   const first = Math.min(...positions);
   const last = Math.max(...positions);
-  const earlyWindow = rawTokens.slice(0, Math.min(rawTokens.length, last + 8)).join(" ");
-  return first <= 1 && last <= 6 && /\b(is|are|was|were|means|refers|known|called|serves|leader|politician|goddess|god|city|capital)\b/i.test(earlyWindow);
+  return first <= 1 && last <= 8 && (DEFINITION_PATTERNS.test(result.text) || OVERVIEW_GOOD_PATTERNS.test(result.text));
 }
 
 function requiredSpecificCoverage(kind, specificTokens, entityStrict) {
@@ -162,6 +165,13 @@ function sourceQuality(result, coreTokens) {
   return score;
 }
 
+function leadPositionBoost(result, kind) {
+  const position = Number.isFinite(result.position) ? result.position : 999;
+  if (position > 30) return 0;
+  const base = kind === "definition" || kind === "fact" || kind === "overview" ? 2.4 : 0.8;
+  return Math.max(0, base - position * 0.14);
+}
+
 function sentenceQuality(text, kind, coreTokens = []) {
   const value = String(text || "").trim();
   let score = 0;
@@ -176,7 +186,7 @@ function sentenceQuality(text, kind, coreTokens = []) {
   if (/^\[?\d+]|^["'“”]/.test(value)) score -= 4;
   if (/^\[[a-z]\]/i.test(value)) score -= 4;
   if (/^\([^)]{1,120}\)/.test(value)) score -= 2;
-  if (/^(also|it|this|that|these|those|he|she|they|his|her|their)\b/i.test(value)) score -= 3;
+  if (/^(also|and|but|or|it|this|that|these|those|he|she|they|his|her|their)\b/i.test(value)) score -= 3;
   if ((value.match(/\b\d+(?:\.\d+)?\s+[A-Z]/g) || []).length >= 2) score -= 6;
   if (/\?$/.test(value)) score -= 5;
   if (/\b(click|subscribe|sign up|cookie|advertisement|buy now|all rights reserved|privacy policy|terms of use)\b/i.test(value)) score -= 1.2;
@@ -191,6 +201,10 @@ function sentenceQuality(text, kind, coreTokens = []) {
   if (kind === "definition") {
     if (DEFINITION_PATTERNS.test(value)) score += 1.2;
     if (/\b(ai|artificial intelligence|agent|assistant|developer|software|system|tool|platform|service|model|application)\b/i.test(value)) score += 0.8;
+    if (/\b(is|are)\s+(a|an|the)\b/i.test(value)) score += 0.8;
+    if (/^in\b/i.test(value)) score -= 1.5;
+    if (/\b(was|were)\s+born\b/i.test(value)) score -= 1.5;
+    if (/\b(mother|father|wife|husband|son|daughter|grandson|granddaughter|family)\b/i.test(value)) score -= 2;
     if (/^(what|how|why|when|where)\b/i.test(value)) score -= 1;
     if (words.length > 65) score -= 2.5;
   }
@@ -201,7 +215,14 @@ function sentenceQuality(text, kind, coreTokens = []) {
     if (!OVERVIEW_GOOD_PATTERNS.test(value)) score -= 0.8;
   }
 
-  if (kind === "how" && /\b(step|use|start|create|install|run|configure|works|process)\b/i.test(value)) score += 0.8;
+  if (kind === "how") {
+    if (/\b(step|use|start|create|install|run|configure|works|process|complete|training|degree|apply)\b/i.test(value)) score += 0.8;
+    if (words.length < 8) score -= 1.5;
+    if (/:$/.test(value)) score -= 1.2;
+    if (/^how to\b/i.test(value)) score -= 2;
+    if (/^(can|what|how|are|is)\b/i.test(value) && words.length < 10) score -= 2;
+    if (/\b(article will provide|comprehensive guide|help you get started|explore how|outline the steps)\b|^starting a career\b/i.test(value)) score -= 1.5;
+  }
   if (kind === "why" && /\b(because|reason|due to|caused by|so that)\b/i.test(value)) score += 0.8;
   if (kind === "fact" && /\b(is|are|was|were|capital|population|currency|president|prime minister)\b/i.test(value)) score += 0.8;
   return score;
@@ -241,6 +262,7 @@ function buildCandidateResponse(query, results) {
       answerScore: result.score +
         sentenceQuality(result.text, kind, coreTokens) +
         sourceQuality(result, coreTokens) +
+        leadPositionBoost(result, kind) +
         tokenOverlap(specificTokens, result.textTokens || uniqueTokens(result.text)) * 1.5
     }))
     .filter((result) => {
@@ -255,7 +277,7 @@ function buildCandidateResponse(query, results) {
       const hasDirectSubjectFocus = (kind !== "definition" && kind !== "overview") || !entityStrict || directIdentityFocus(result, specificTokens);
       const hasHowShape = kind !== "how" || hasHowToProof(result, specificTokens);
       const hasOverviewShape = kind !== "overview" || !OVERVIEW_BAD_PATTERNS.test(result.text);
-      const qualityFloor = kind === "overview" ? 0.35 : -0.2;
+      const qualityFloor = kind === "overview" ? 0.35 : kind === "how" ? 0.45 : -0.2;
       return result.overlap >= minimumOverlap &&
         hasSpecificTerm &&
         hasEntityFocus &&
@@ -270,7 +292,8 @@ function buildCandidateResponse(query, results) {
     .slice(0, 5);
 
   const approved = scored.find((result) => result.type === "approved-answer");
-  const candidates = approved && approved.overlap >= 0.5 ? [approved] : scored.slice(0, kind === "definition" ? 2 : 4);
+  const candidateLimit = kind === "definition" ? 1 : kind === "fact" || kind === "how" ? 2 : 4;
+  const candidates = approved && approved.overlap >= 0.5 ? [approved] : scored.slice(0, candidateLimit);
   const answer = candidates.map((result) => normalizeAnswerText(result.text)).join("\n\n");
   return { answer, candidates };
 }
@@ -296,12 +319,16 @@ export class KnowledgeEngine {
           title: document.title,
           text,
           source: document.source,
+          position: index,
           updatedAt: document.lastUpdated || document.timestamp
         });
       });
     }
 
+    const factPositions = new Map();
     for (const fact of this.db.data.facts) {
+      const inferredPosition = factPositions.get(fact.documentId) || 0;
+      factPositions.set(fact.documentId, inferredPosition + 1);
       chunks.push({
         id: fact.id,
         documentId: fact.documentId,
@@ -309,6 +336,7 @@ export class KnowledgeEngine {
         title: fact.topic || "Fact",
         text: fact.text,
         source: fact.source,
+        position: Number.isFinite(fact.position) ? fact.position : inferredPosition,
         updatedAt: fact.lastUpdated
       });
     }
@@ -373,7 +401,8 @@ export class KnowledgeEngine {
   }
 
   extractFacts(document) {
-    for (const sentence of splitSentences(document.content)) {
+    const sentences = splitSentences(document.content);
+    for (const [position, sentence] of sentences.entries()) {
       if (!isFactLike(sentence)) continue;
       const hash = hashText(`${document.source}:${sentence}`);
       const existing = this.db.data.facts.findIndex((fact) => fact.hash === hash);
@@ -384,6 +413,7 @@ export class KnowledgeEngine {
         source: document.source,
         topic: document.title,
         hash,
+        position,
         lastUpdated: new Date().toISOString(),
         weight: 1
       };
@@ -472,7 +502,7 @@ export class KnowledgeEngine {
       return intentResponse;
     }
 
-    const results = this.index.search(query, 60);
+    const results = this.index.search(query, 250);
     const { answer, candidates } = buildCandidateResponse(query, results);
     const contradictions = this.detectContradictions(candidates.slice(0, 6));
     const confidence = this.confidence(candidates, contradictions, answer);

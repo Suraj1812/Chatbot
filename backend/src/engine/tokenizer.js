@@ -14,7 +14,7 @@ const SYNONYMS = {
   scrape: ["scraping", "crawl", "fetch", "extract"],
   answer: ["response", "result", "reply"],
   accurate: ["accuracy", "relevant", "correct"],
-  learn: ["learning", "memory", "remember"]
+  learn: ["learning"]
 };
 
 export function normalizeText(value) {
@@ -37,7 +37,14 @@ export function stem(token) {
 export function tokenize(value, { expand = false } = {}) {
   const base = normalizeText(value)
     .split(/\s+/)
-    .map((token) => stem(token.replace(/^[.-]+|[.-]+$/g, "")))
+    .flatMap((token) => {
+      const cleaned = token.replace(/^[.-]+|[.-]+$/g, "");
+      if (!cleaned.includes(".")) return [cleaned];
+      const parts = cleaned.split(".").filter(Boolean);
+      if (parts.length === 2 && parts[1] === "js") return [parts[0]];
+      return parts;
+    })
+    .map((token) => stem(token))
     .filter((token) => token.length > 1 && !STOP_WORDS.has(token));
 
   if (!expand) return base;
