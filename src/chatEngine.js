@@ -4,6 +4,7 @@ import { analyzeSources } from "./multiSourceAnalyzer.js";
 import { normalizeUserProfile, adjustForLevel, formatAdvice } from "./personalization.js";
 import { RelevanceEngine } from "./relevanceEngine.js";
 import { tokenize } from "./tokenizer.js";
+import { detectConversationIntent } from "./intentEngine.js";
 
 function buildDirectAnswer(query, analysis, relevantFacts) {
   if (relevantFacts.length > 0) {
@@ -112,6 +113,12 @@ export class ChatEngine {
       this.cache.delete(cacheKey);
       this.cache.set(cacheKey, cached);
       return { ...cached, cached: true };
+    }
+
+    const intentResponse = detectConversationIntent(query);
+    if (intentResponse) {
+      this.cache.set(cacheKey, intentResponse);
+      return intentResponse;
     }
 
     const results = this.relevanceEngine.rank(query, { limit: 5 });

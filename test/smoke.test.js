@@ -44,6 +44,19 @@ assert.ok(engine.knowledgeBase.facts.length > 0);
 const second = engine.ask("How does the system clean scraped data?", { level: "advanced" });
 assert.equal(second.cached, true);
 
+for (const phrase of ["hi", "hello", "hola", "namaste"]) {
+  const reply = engine.ask(phrase, { level: "beginner" });
+  assert.equal(reply.metadata.intent, "conversation");
+  assert.equal(reply.sources.length, 0);
+  assert.ok(reply.answer.toLowerCase().startsWith("hi"));
+}
+
+const thanks = engine.ask("thankyou", { level: "beginner" });
+assert.equal(thanks.answer, "You’re welcome.");
+
+const bye = engine.ask("bye", { level: "beginner" });
+assert.ok(bye.answer.startsWith("Bye"));
+
 const scraped = scrapeHtml(
   "<html><head><title>Scrape Test</title><style>.x{}</style></head><body><nav>Home Login</nav><main><h1>Useful Page</h1><p>Local scraping extracts readable page text without external APIs.</p><p>It removes script and style content before storing knowledge.</p></main><script>alert(1)</script></body></html>",
   "local-test"
